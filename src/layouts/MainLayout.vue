@@ -3,7 +3,7 @@
     <q-header elevated>
       <q-toolbar>
         <q-toolbar-title>
-          Quasar App
+         <div class="text-center">TutorPlan</div>
         </q-toolbar-title>
       </q-toolbar>
     </q-header>

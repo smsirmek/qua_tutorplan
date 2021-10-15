@@ -1,10 +1,17 @@
 <template>
 
   <q-page class="flex q-pa-md">
+      Welcome Home {{ user }} <br> {{ email }}
     <q-space />
-    <q-card class="full-width">
-      today
-    </q-card>
+    <div>
+      <q-btn
+        class="flex flex-center q-px-lg q-py-sm q-mb-md"
+        size="md"
+        label="Logout"
+        @click="logout"
+        color="primary"
+      />
+    </div>
   </q-page>
 </template>
 
