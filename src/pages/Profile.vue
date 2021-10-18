@@ -18,7 +18,7 @@
 <script>
 import firebase from 'firebase'
 export default {
-  name: 'Home',
+  name: 'Profile',
   data () {
     return {
       user: '',
