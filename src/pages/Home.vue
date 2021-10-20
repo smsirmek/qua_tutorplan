@@ -1,29 +1,23 @@
 <template>
 
   <q-page class="flex q-pa-md">
-    <q-space />
     <q-card class="full-width">
-      today
+      <q-tabs
+        v-model="$options"
+        dense
+        class="text-grey"
+        active-color="primary"
+        indicator-color="primary"
+        align="justify"
+        narrow-indicator
+      >
+        <q-tab name="work" label="Work" />
+        <q-tab name="listPage" label="Student Data" />
+        <q-tab name="map" label="Map" />
+        <q-tab name="transaction" label="Transaction" />
+        <q-tab name="profile" label="Profile"/>
+      </q-tabs>
     </q-card>
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
-      <q-list>
-        <q-item-label
-          header
-        >
-          MENU
-        </q-item-label>
-
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
-    </q-drawer>
   </q-page>
 </template>
 
