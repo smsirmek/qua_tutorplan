@@ -14,7 +14,7 @@
         outlined
         class="q-mb-md"
         type="email"
-        label="Email" />
+        label="Email"/>
       <q-input
         v-model="formData.password"
         outlined
@@ -87,7 +87,7 @@ export default {
         .then(result => {
           console.log('result', result)
           this.$q.notify({ message: 'Sign In Success.' })
-          this.$router.push('/home')
+          this.$router.push('/list')
         })
         .catch(error => console.log('error', error))
     },
@@ -96,7 +96,7 @@ export default {
       firebase.auth().signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
           this.$q.notify({ message: 'Sign In Success.' })
-          this.$router.push('/home')
+          this.$router.push('/list')
         })
         .catch(error => { console.log(error) })
     },
@@ -105,7 +105,7 @@ export default {
       firebase.auth().createUserWithEmailAndPassword(email, password)
         .then(auth => {
           this.$q.notify({ message: 'Sign In Success.' })
-          this.$router.push('/home')
+          this.$router.push('/list')
         })
         .catch(error => {
           console.log(error)
