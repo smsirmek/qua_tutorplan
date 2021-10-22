@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import ListpageComponent from 'src/components/ListpageComponent.vue'
+import ListpageComponent from 'src/components/AddDataComponent.vue'
 export default {
   // eslint-disable-next-line vue/no-unused-components
   components: { ListpageComponent },
