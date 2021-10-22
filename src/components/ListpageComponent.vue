@@ -1,7 +1,6 @@
 <template>
   <div>
     <q-layout>
-      <p class="text-center">StudentList</p>
       <q-list bordered class="rounded-borders">
 
       <q-item clickable v-ripple  v-for="newStudent in newStudents"
@@ -26,9 +25,6 @@
 
 <script>
 export default {
-
-  props: ['tab'],
-
   data () {
     return {
       formData: {

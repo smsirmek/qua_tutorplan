@@ -1,7 +1,8 @@
 <template>
   <div>
-    <q-layout>
-      <p class="text-center" >Add Student Data</p>
+      <q-card class="flex q-pa-md">
+    <q-layout class="full-width">
+      <p class="text-center">Add Student Data</p>
       <div class="q-ml-xl q-mr-xl">
       <q-form @submit="submitForm">
       <q-input
@@ -47,14 +48,15 @@
     </q-form>
       </div>
     </q-layout>
+      </q-card>
   </div>
 </template>
 
 <script>
+import ListpageComponent from 'src/components/ListpageComponent.vue'
 export default {
-
-  props: ['tab'],
-
+/* eslint-disable */
+components: { ListpageComponent },
   data () {
     return {
       formData: {
@@ -64,11 +66,7 @@ export default {
         parentContact: '',
         address: ''
       },
-      newStudents: [{
-        content: 'LOREM',
-        addr: 'Rolong'
-      }]
-
+      tab: ''
     }
   },
   methods: {
@@ -76,12 +74,8 @@ export default {
       console.log(this.formData)
     },
     addNewStudent () {
-/* eslint-disable */     
-      let newStudent = {
-        content: this.sname,
-        addr: this.address
-      }
-      this.newStudent.push(newStudent)
+/* eslint-disable */ 
+      //this.newStudent.push(newStudent)
       this.$router.push('/list')
     },
   }
@@ -89,5 +83,8 @@ export default {
 </script>
 
 <style scoped>
-
+.text-center {
+  color: crimson;
+  font-weight: 700;
+}
 </style>
