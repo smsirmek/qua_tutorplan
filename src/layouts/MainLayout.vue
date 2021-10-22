@@ -25,44 +25,57 @@
           <q-list padding>
             <q-item clickable v-ripple>
               <q-item-section avatar>
-                <q-icon name="inbox" />
+                <q-icon name="home" />
               </q-item-section>
-
+            <router-link to = "/home">
               <q-item-section>
-                Inbox
+                Home
               </q-item-section>
-            </q-item>
-
-            <q-item active clickable v-ripple>
-              <q-item-section avatar>
-                <q-icon name="star" />
-              </q-item-section>
-
-              <q-item-section>
-                Star
-              </q-item-section>
+            </router-link>
             </q-item>
 
             <q-item clickable v-ripple>
               <q-item-section avatar>
-                <q-icon name="send" />
+                <q-icon name="explore" />
               </q-item-section>
-
+            <router-link to = " ">
               <q-item-section>
-                Send
+                Map
               </q-item-section>
+            </router-link>
             </q-item>
 
+            <q-item clickable v-ripple>
+              <q-item-section avatar>
+                <q-icon name="article" />
+              </q-item-section>
+            <router-link to = " ">
+              <q-item-section>
+                Listpage
+              </q-item-section>
+            </router-link>
+            </q-item>
+
+            <q-item clickable v-ripple>
+              <q-item-section avatar>
+                <q-icon name="paid" />
+              </q-item-section>
+            <router-link to = "/transaction">
+              <q-item-section>
+                Transaction
+              </q-item-section>
+            </router-link>
+            </q-item>
             <q-separator />
-
             <q-item clickable v-ripple>
               <q-item-section avatar>
-                <q-icon name="drafts" />
+                <q-icon name="account_circle" />
               </q-item-section>
-
+            <router-link to = "/profile">
               <q-item-section>
-                Drafts
+                Profile
               </q-item-section>
+            </router-link>
             </q-item>
           </q-list>
         </q-scroll-area>
