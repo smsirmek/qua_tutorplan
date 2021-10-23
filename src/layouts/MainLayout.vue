@@ -11,7 +11,6 @@
     <q-drawer
         v-model="drawer"
         show-if-above
-
         :mini="miniState"
         @mouseover="miniState = false"
         @mouseout="miniState = true"

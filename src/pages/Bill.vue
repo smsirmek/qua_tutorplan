@@ -81,6 +81,7 @@ export default {
       BillData: [],
       isLoading: false,
       confirm: false,
+      uid: null,
       quasar: useQuasar()
     }
   },
@@ -108,8 +109,9 @@ export default {
 
     async confirmPayment () {
       this.quasar.loading.show()
+      let sum = 0
       for (let x = 0; x < this.selected.length; x++) {
-        console.log(this.selected[x].docID)
+        sum += this.selected[x].Total
         await firebase.firestore().collection('Bill').doc(this.selected[x].docID).update({
           paid: true
         }).catch((err) => {
@@ -121,16 +123,15 @@ export default {
           })
         })
       }
+      await firebase.firestore().collection('Income').add({
+        confrimTime: new Date().getTime(),
+        userID: this.uid,
+        income: sum,
+        studentName: this.studentName
+      })
       this.confirm = false
       this.quasar.loading.hide()
       this.forceRerender()
-      // setTimeout(() => {
-      //   this.quasar.loading.hide()
-      //   this.quasar.notify({
-      //     type: 'negative',
-      //     message: 'Error Timeout please check your Network'
-      //   })
-      // }, 2000)
     },
     forceRerender () {
       this.fetchData()
@@ -141,6 +142,7 @@ export default {
     totalHour () {
       let sum = 0
       for (let x = 0; x < this.selected.length; x++) {
+        // eslint-disable-next-line no-unused-vars
         sum += this.selected[x].Hour
       }
       return sum
@@ -154,6 +156,8 @@ export default {
     }
   },
   async created () {
+    const user = await firebase.getCurrentUser()
+    this.uid = user.uid
     await this.fetchData()
   }
 
