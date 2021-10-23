@@ -5,16 +5,12 @@ module.exports = {
   root: true,
 
   parserOptions: {
-    parser: '@babel/eslint-parser',
-    ecmaVersion: 2018, // Allows for the parsing of modern ECMAScript features
-    sourceType: 'module' // Allows for the use of imports
   },
 
   env: {
     browser: true
   },
 
-  // Rules order is important, please avoid shuffling them
   extends: [
     // Base ESLint recommended rules
     // 'eslint:recommended',
@@ -73,6 +69,6 @@ module.exports = {
 
 
     // allow debugger during development only
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
+    'no-debugger': process.env.NODE_ENV === 'development' ? 'error' : 'off'
   }
 }
