@@ -65,7 +65,6 @@ export default {
               obj.income = doc.data().income
               obj.studentName = doc.data().studentName
               this.IncomeData.push(obj)
-              console.log(this.IncomeData)
             })
           }
         })

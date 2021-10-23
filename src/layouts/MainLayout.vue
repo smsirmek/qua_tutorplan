@@ -65,6 +65,17 @@
               </q-item-section>
             </router-link>
             </q-item>
+            <q-item clickable v-ripple>
+              <q-item-section avatar>
+                <q-icon name="paid" />
+              </q-item-section>
+              <router-link to = "/income">
+                <q-item-section>
+                  Bill
+                </q-item-section>
+              </router-link>
+            </q-item>
+
             <q-separator />
             <q-item clickable v-ripple>
               <q-item-section avatar>
