@@ -1,17 +1,28 @@
 <template>
 
   <q-page class="flex q-pa-md">
-      Welcome Home {{ user }} <br> {{ email }}
-    <q-space />
-    <div>
-      <q-btn
-        class="flex flex-center q-px-lg q-py-sm q-mb-md"
+      <q-card class="my-card">
+      <q-item>
+        <q-item-section avatar>
+          <q-avatar size="100px" font-size="52px">
+            <img src="https://cdn.quasar.dev/img/avatar2.jpg">
+          </q-avatar>
+        </q-item-section>
+        <q-item-section>
+          <q-item-label><div class="text-h5">  Hi!! {{ user }}</div> </q-item-label>
+          <q-item-label caption><div class="text-h6">{{ email }}</div> </q-item-label>
+        </q-item-section>
+      </q-item>
+    </q-card>
+    <div  class="absolute-bottom-right q-ma-xl q-pa-md">
+    <q-btn
+        class="flex-center"
         size="md"
         label="Logout"
         @click="logout"
         color="primary"
       />
-    </div>
+      </div>
   </q-page>
 </template>
 
@@ -48,6 +59,10 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style lang="sass" scoped>
+.my-card
+  width: 100%
+  max-width: 720px
+  height: 100%
+  max-height: 360px
 </style>
