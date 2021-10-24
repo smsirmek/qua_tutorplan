@@ -1,12 +1,95 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-toolbar-title>
-         <div class="text-center">TutorPlan</div>
-        </q-toolbar-title>
-      </q-toolbar>
-    </q-header>
+<q-header elevated >
+        <q-toolbar>
+          <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
+          <q-toolbar-title>
+            <div class="text-center">Tutorplan</div>
+          </q-toolbar-title>
+        </q-toolbar>
+      </q-header>
+    <q-drawer
+        v-model="drawer"
+        show-if-above
+        :mini="miniState"
+        @mouseover="miniState = false"
+        @mouseout="miniState = true"
+
+        :width="200"
+        :breakpoint="500"
+        bordered
+        class="bg-grey-3"
+      >
+        <q-scroll-area class="fit">
+          <q-list padding>
+            <q-item clickable v-ripple>
+              <q-item-section avatar>
+                <q-icon name="home" />
+              </q-item-section>
+            <router-link to = "/home">
+              <q-item-section>
+                Home
+              </q-item-section>
+            </router-link>
+            </q-item>
+
+            <q-item clickable v-ripple>
+              <q-item-section avatar>
+                <q-icon name="explore" />
+              </q-item-section>
+            <router-link to = " ">
+              <q-item-section>
+                Map
+              </q-item-section>
+            </router-link>
+            </q-item>
+
+            <q-item clickable v-ripple>
+              <q-item-section avatar>
+                <q-icon name="article" />
+              </q-item-section>
+            <router-link to = " ">
+              <q-item-section>
+                Listpage
+              </q-item-section>
+            </router-link>
+            </q-item>
+
+            <q-item clickable v-ripple>
+              <q-item-section avatar>
+                <q-icon name="paid" />
+              </q-item-section>
+            <router-link to = "/transaction">
+              <q-item-section>
+                Transaction
+              </q-item-section>
+            </router-link>
+            </q-item>
+            <q-item clickable v-ripple>
+              <q-item-section avatar>
+                <q-icon name="paid" />
+              </q-item-section>
+              <router-link to = "/income">
+                <q-item-section>
+                  Bill
+                </q-item-section>
+              </router-link>
+            </q-item>
+
+            <q-separator />
+            <q-item clickable v-ripple>
+              <q-item-section avatar>
+                <q-icon name="account_circle" />
+              </q-item-section>
+            <router-link to = "/profile">
+              <q-item-section>
+                Profile
+              </q-item-section>
+            </router-link>
+            </q-item>
+          </q-list>
+        </q-scroll-area>
+      </q-drawer>
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -14,51 +97,6 @@
 </template>
 
 <script>
-
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
 
 import { defineComponent, ref } from 'vue'
 
@@ -69,14 +107,9 @@ export default defineComponent({
   },
 
   setup () {
-    const leftDrawerOpen = ref(false)
-
     return {
-      essentialLinks: linksList,
-      leftDrawerOpen,
-      toggleLeftDrawer () {
-        leftDrawerOpen.value = !leftDrawerOpen.value
-      }
+      drawer: ref(false),
+      miniState: ref(true)
     }
   }
 })

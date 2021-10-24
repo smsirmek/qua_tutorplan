@@ -28,12 +28,18 @@
 </template>
 
 <script>
+import firebase from 'firebase'
 import AuthComponent from 'components/AuthComponent'
 export default {
   components: { AuthComponent },
   data () {
     return {
       tab: 'login'
+    }
+  },
+  async created () {
+    if (!await firebase.getCurrentUser() !== undefined) {
+      await this.$router.push('/home')
     }
   }
 }

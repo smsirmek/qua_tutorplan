@@ -12,8 +12,10 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "core-js": "^3.6.5",
-    "firebase": "^8.10.0",
+    "firebase": "^8.6.2",
+    "moment": "^2.29.1",
     "quasar": "^2.0.0",
+    "vue": "^3.2.19",
     "vuex": "^4.0.1"
   },
   "devDependencies": {
