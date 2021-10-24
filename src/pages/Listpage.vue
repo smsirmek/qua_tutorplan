@@ -16,7 +16,7 @@
       <q-tab-panels v-model="tab">
         <q-tab-panel name="studentlist">
 
-         <AddDataComponent :tab="tab"/>
+         <ListpageComponent :tab="tab"/>
         </q-tab-panel>
       </q-tab-panels>
     </q-card>
@@ -25,10 +25,9 @@
 
 <script>
 import ListpageComponent from 'src/components/ListpageComponent.vue'
-import AddDataComponent from 'src/components/AddDataComponent.vue'
 export default {
   // eslint-disable-next-line vue/no-unused-components
-  components: { ListpageComponent, AddDataComponent },
+  components: { ListpageComponent },
   data () {
     return {
       tab: 'studentlist'

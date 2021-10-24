@@ -7,9 +7,18 @@
          :key="newStudent">
 
         <q-item-section>
-       <q-item-label lines="1">{{newStudent.content}}</q-item-label>
+       <q-item-label lines="1">{{newStudent.StudentName}}</q-item-label>
           <q-item-label caption lines="2">
-              {{newStudent.addr}}
+            Studentcontact: {{newStudent.StudentContact}}
+          </q-item-label>
+          <q-item-label caption lines="3">
+            Parentname: {{newStudent.ParentName}}
+          </q-item-label>
+          <q-item-label caption lines="4">
+            Parentcontact: {{newStudent.ParentContact}}
+          </q-item-label>
+          <q-item-label caption lines="5">
+            Address: {{newStudent.Address}}
           </q-item-label>
         </q-item-section>
       </q-item>
@@ -24,27 +33,37 @@
 </template>
 
 <script>
+import firebase from 'firebase'
+const db = firebase.firestore()
+
 export default {
   data () {
     return {
-      formData: {
-        studentName: '',
-        parentName: '',
-        studentContact: '',
-        parentContact: '',
-        address: ''
-      },
-      newStudents: [{
-        content: 'LOREM',
-        addr: 'Rolong'
-      }]
-
+      newStudents: []
     }
   },
   methods: {
     goToAddStudentData () {
       this.$router.push('/Add')
+    },
+    async importStudentData () {
+      const User = await firebase.getCurrentUser()
+      await db.collection('StudentList').where('userId', '==', User.uid).get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            this.newStudents.push({
+              StudentName: doc.data().studentName,
+              StudentContact: doc.data().studentContact,
+              ParentName: doc.data().parentName,
+              ParentContact: doc.data().parentContact,
+              Address: doc.data().address
+            })
+          })
+        })
     }
+  },
+  async created  () {
+    await this.importStudentData()
   }
 }
 </script>

@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/default
 import firebase from 'firebase/app'
 import 'firebase/auth'
+import 'firebase/firestore'
 
 // set vars for process.env
 const firebaseConfig = {

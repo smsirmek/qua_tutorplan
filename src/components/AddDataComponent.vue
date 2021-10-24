@@ -10,25 +10,25 @@
         outlined
         class="q-mb-md"
         type="title"
-        label="Studentname"/>
+        label="Student name"/>
       <q-input
         v-model="formData.studentContact"
         outlined
         class="q-mb-md"
         type="title"
-        label="Studentcontact"/>
+        label="Student contact"/>
         <q-input
         v-model="formData.parentName"
         outlined
         class="q-mb-md"
         type="title"
-        label="Parentname"/>
+        label="Parent name"/>
         <q-input
         v-model="formData.parentContact"
         outlined
         class="q-mb-md"
         type="title"
-        label="Parentcontact"/>
+        label="Parent contact"/>
         <q-input
         v-model="formData.address"
         outlined
@@ -54,17 +54,21 @@
 
 <script>
 import ListpageComponent from 'src/components/ListpageComponent.vue'
+
+import firebase from 'firebase'
+const db = firebase.firestore()
+
 export default {
 /* eslint-disable */
 components: { ListpageComponent },
   data () {
     return {
       formData: {
-        studentName: '',
-        parentName: '',
-        studentContact: '',
-        parentContact: '',
-        address: ''
+        studentName: null,
+        parentName: null,
+        studentContact: null,
+        parentContact: null,
+        address: null
       },
       tab: ''
     }
@@ -73,10 +77,23 @@ components: { ListpageComponent },
     submitForm () {
       console.log(this.formData)
     },
-    addNewStudent () {
+  async addNewStudent () {
 /* eslint-disable */ 
-      //this.newStudent.push(newStudent)
-      this.$router.push('/list')
+     // this.newStudent.push(newStudent)
+      
+      if(this.formData.studentName && this.formData.parentName && this.formData.studentContact && this.formData.parentContact && this.formData.address) {
+          const User = await firebase.getCurrentUser()
+          await db.collection('StudentList').add({ 
+            studentName: this.formData.studentName,
+            parentName: this.formData.parentName,
+            studentContact: this.formData.studentContact,
+            parentContact: this.formData.parentContact,
+            address: this.formData.address,
+            userId: User.uid
+          }).catch((err)=>{alert('Error code',err)})
+  this.$router.push('/list')
+      }
+      
     },
   }
 }
