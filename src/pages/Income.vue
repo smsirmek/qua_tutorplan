@@ -19,10 +19,13 @@
       font-weight: bold;">
         BALANCE</span>
       <div>
-        <q-btn label="Close Icon" color="primary" @click="showDatePicker = true" />
         <span style=" font-size: 3em">{{totalIncome}}</span>
         <span> Bath</span>
       </div>
+    </div>
+    <div style=" margin:10px;
+    text-align: center;">
+    <q-btn label="select date" icon="date_range" color="primary" @click="showDatePicker = true" />
     </div>
     <q-separator/>
     <div class="Inn-block" v-for="(item,index) in IncomeData" :key="index">
@@ -34,17 +37,21 @@
         <span style="vertical-align:middle; margin-left: 100px" > + {{item.income}} ฿</span>
       </div>
     </div>
+
       <q-dialog v-model="showDatePicker">
         <q-card>
-          <q-card-section class="row items-center q-pb-none">
-            <div class="text-h6"> select range of date Income</div>
-            <q-space />
-            <q-btn icon="close" flat round dense v-close-popup />
+          <div>
+          <q-card-section class="item-center">
+            <div class="text-h6 text-center">Please select range of date </div>
+            <!-- <q-space />
+            <q-btn icon="close" flat round dense v-close-popup /> -->
           </q-card-section>
+          <q-separator/>
           <q-card-section>
             <q-date v-model="selectedRange" range mask="YYYY-MM-DD"/>
-            <q-btn style="background: #FF0080; color: white" label="select" v-close-popup v-on:click="fecthData()" />
           </q-card-section>
+            <q-btn style="float: right; margin:10px;" color="primary" label="select" v-close-popup v-on:click="fecthData()" />
+          </div>
         </q-card>
       </q-dialog>
     </q-pull-to-refresh>
