@@ -19,6 +19,7 @@
       font-weight: bold;">
         BALANCE</span>
       <div>
+        <q-btn label="Close Icon" color="primary" @click="showDatePicker = true" />
         <span style=" font-size: 3em">{{totalIncome}}</span>
         <span> Bath</span>
       </div>
@@ -33,6 +34,19 @@
         <span style="vertical-align:middle; margin-left: 100px" > + {{item.income}} ฿</span>
       </div>
     </div>
+      <q-dialog v-model="showDatePicker">
+        <q-card>
+          <q-card-section class="row items-center q-pb-none">
+            <div class="text-h6"> select range of date Income</div>
+            <q-space />
+            <q-btn icon="close" flat round dense v-close-popup />
+          </q-card-section>
+          <q-card-section>
+            <q-date v-model="selectedRange" range mask="YYYY-MM-DD"/>
+            <q-btn style="background: #FF0080; color: white" label="select" v-close-popup v-on:click="fecthData()" />
+          </q-card-section>
+        </q-card>
+      </q-dialog>
     </q-pull-to-refresh>
   </div>
 
@@ -40,22 +54,29 @@
 
 <script>
 import firebase from 'firebase'
+import moment from 'moment'
 export default {
   name: 'Income',
   async created () {
-    await this.fecthData()
   },
   data () {
     return {
-      IncomeData: []
+      IncomeData: [],
+      showDatePicker: false,
+      // ? setting defaul valuse
+      selectedRange: { from: moment().locale('th').format('YYYY/MM/DD'), to: moment().locale('th').subtract(1, 'month').format('YYYY/MM/DD') }
     }
   },
   methods: {
     async fecthData () {
+      console.log(this.selectedRange.to)
+      console.log(moment(this.selectedRange.from).unix())
       this.IncomeData = []
       const user = await firebase.getCurrentUser()
       await firebase.firestore().collection('Income')
         .where('userID', '==', user.uid)
+        .where('confrimTime', '>=', moment(this.selectedRange.from).unix())
+        .where('confrimTime', '<=', moment(this.selectedRange.to).unix())
         .orderBy('confrimTime', 'desc')
         .get()
         .then((snapshot) => {
@@ -66,6 +87,8 @@ export default {
               obj.studentName = doc.data().studentName
               this.IncomeData.push(obj)
             })
+          } else {
+            alert('not doc found')
           }
         })
     },

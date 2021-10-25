@@ -44,7 +44,7 @@
 import { ref } from 'vue'
 import { useQuasar } from 'quasar'
 import firebase from 'firebase'
-
+import moment from 'moment'
 const columns = [
   {
     name: 'Date',
@@ -124,7 +124,7 @@ export default {
         })
       }
       await firebase.firestore().collection('Income').add({
-        confrimTime: new Date().getTime(),
+        confrimTime: moment().locale('th').unix(),
         userID: this.uid,
         income: sum,
         studentName: this.studentName
@@ -156,6 +156,7 @@ export default {
     }
   },
   async created () {
+    console.log(moment().locale('th').toDate())
     const user = await firebase.getCurrentUser()
     this.uid = user.uid
     await this.fetchData()
