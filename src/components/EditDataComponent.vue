@@ -69,7 +69,7 @@ components: { ListpageComponent },
       parentName: null,
       parentContact: null,
       address: null,
-      not: useQuasar()
+      not: useQuasar(),
     }
   },
   methods: {
@@ -91,9 +91,10 @@ components: { ListpageComponent },
            this.$router.back()
        }).catch((err) => {console.log(err)})
       }
-      
+
     },
     async getStudentData () {
+      this.showLoading(true)
         this.formData = []
         await firebase.firestore().collection('StudentList').doc(this.$route.params.Key)
         .get()
@@ -104,13 +105,21 @@ components: { ListpageComponent },
              this.parentContact = doc.data().parentContact
              this.address = doc.data().address
         })
+      this.showLoading(false)
     },
-
+    showLoading (isLoading) {
+      if(isLoading){
+        this.not.loading.show()
+      }
+      else if(!isLoading){
+        this.not.loading.hide()
+      }
+    }
   },
   async created () {
       await this.getStudentData()
-      console.log(this.formData)
   }
+
 }
 </script>
 

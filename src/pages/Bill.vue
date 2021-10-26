@@ -37,7 +37,6 @@
       </q-dialog>
     </div>
   </div>
-
 </template>
 
 <script>
