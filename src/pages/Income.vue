@@ -28,7 +28,7 @@
     <q-btn label="select date" icon="date_range" color="primary" @click="showDatePicker = true" />
     </div>
     <q-separator/>
-    <div class="Inn-block" v-for="(item,index) in IncomeData" :key="index">
+    <q-card class="Inn-block" v-for="(item,index) in IncomeData" :key="index">
       <div id="photo" >
         <q-avatar style="vertical-align:middle">
           <img src="https://scontent.furt2-1.fna.fbcdn.net/v/t1.6435-9/131120282_1698174107023575_704994861676205759_n.jpg?_nc_cat=111&ccb=1-5&_nc_sid=174925&_nc_ohc=3dcQwcb8mTAAX8_AKFX&_nc_ht=scontent.furt2-1.fna&oh=ff5f570a604d72ee63269cf7d754c388&oe=619971AE">
@@ -36,7 +36,7 @@
         <span style="vertical-align:middle"> {{item.studentName}}</span>
         <span style="vertical-align:middle; margin-left: 100px" > + {{item.income}} ฿</span>
       </div>
-    </div>
+    </q-card>
 
       <q-dialog v-model="showDatePicker">
         <q-card>
@@ -54,6 +54,27 @@
           </div>
         </q-card>
       </q-dialog>
+
+    <q-card class="Inn-block item-center" v-if="selectedRange.from === null">
+      <div class="text-5 text-center text-weight-bold">Please select date</div>
+    </q-card>
+
+    <q-dialog v-model="alert">
+      <q-card>
+        <q-card-section>
+          <div class="text-h4 text-weight-bold text-center">Alert</div>
+        </q-card-section>
+
+        <q-card-section class="flex-center q-pt-none">
+         <span class="text-h5">Data Not found</span>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Close" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
     </q-pull-to-refresh>
   </div>
 
@@ -70,8 +91,9 @@ export default {
     return {
       IncomeData: [],
       showDatePicker: false,
+      alert: false,
       // ? setting defaul valuse
-      selectedRange: { from: moment().locale('th').format('YYYY/MM/DD'), to: moment().locale('th').subtract(1, 'month').format('YYYY/MM/DD') }
+      selectedRange: { from: null, to: null }
     }
   },
   methods: {
@@ -95,7 +117,7 @@ export default {
               this.IncomeData.push(obj)
             })
           } else {
-            alert('not doc found')
+            this.alert = true
           }
         })
     },
