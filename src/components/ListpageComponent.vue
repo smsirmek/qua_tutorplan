@@ -7,6 +7,12 @@
          :key="newStudent">
 
         <q-item-section>
+          <q-slide-item  @right="onRight">
+        <template v-slot:right>
+          <q-icon name="delete" />
+        </template>
+          <q-banner class="bg-grey-3">
+          <q-item-section >
        <q-item-label lines="1">{{newStudent.StudentName}}</q-item-label>
           <q-item-label caption lines="2">
             Studentcontact: {{newStudent.StudentContact}}
@@ -20,6 +26,9 @@
           <q-item-label caption lines="5">
             Address: {{newStudent.Address}}
           </q-item-label>
+          </q-item-section>
+          </q-banner>
+          </q-slide-item>
         </q-item-section>
       </q-item>
     </q-list>
@@ -34,6 +43,8 @@
 
 <script>
 import firebase from 'firebase'
+import { useQuasar } from 'quasar'
+import { onBeforeUnmount } from 'vue'
 const db = firebase.firestore()
 
 export default {
@@ -64,8 +75,30 @@ export default {
   },
   async created  () {
     await this.importStudentData()
+  },
+  setup () {
+    const $q = useQuasar()
+    let timer
+
+    function finalize (reset) {
+      timer = setTimeout(() => {
+        reset()
+      }, 1000)
+    }
+
+    onBeforeUnmount(() => {
+      clearTimeout(timer)
+    })
+
+    return {
+      onRight ({ reset }) {
+        $q.notify('Delete success')
+        finalize(reset)
+      }
+    }
   }
 }
+
 </script>
 
 <style scoped>

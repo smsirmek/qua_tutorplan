@@ -48,7 +48,7 @@
               <q-item-section avatar>
                 <q-icon name="article" />
               </q-item-section>
-            <router-link to = " ">
+            <router-link to = "/list">
               <q-item-section>
                 Listpage
               </q-item-section>
