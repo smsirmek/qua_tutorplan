@@ -11,7 +11,8 @@ const routes = [
       { path: '/profile', component: () => import('pages/Profile.vue'), meta: { requiresAuth: true } },
       { path: '/transaction', component: () => import('pages/Transaction.vue'), meta: { requiresAuth: true } },
       { path: '/bill/:id', component: () => import('pages/Bill.vue'), meta: { requiresAuth: true } },
-      { path: '/income', component: () => import('pages/Income.vue'), meta: { requiresAuth: true } }
+      { path: '/income', component: () => import('pages/Income.vue'), meta: { requiresAuth: true } },
+      { path: '/edit/studentdata/:Key', component: () => import('components/EditDataComponent.vue'), meta: { requiresAuth: true } }
     ]
   },
 

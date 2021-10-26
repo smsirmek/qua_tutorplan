@@ -7,9 +7,13 @@
          :key="newStudent">
 
         <q-item-section>
-          <q-slide-item  @right="onRight">
+          <q-slide-item  @right="deleteStudentData(newStudent.docID)">
         <template v-slot:right>
           <q-icon name="delete" />
+        </template>
+        <q-slide-item @left="editStudentData(newStudent.docID)">
+        <template v-slot:left>
+          <q-icon name="edit" />
         </template>
           <q-banner class="bg-grey-3">
           <q-item-section >
@@ -28,6 +32,7 @@
           </q-item-label>
           </q-item-section>
           </q-banner>
+        </q-slide-item>
           </q-slide-item>
         </q-item-section>
       </q-item>
@@ -58,11 +63,13 @@ export default {
       this.$router.push('/Add')
     },
     async importStudentData () {
+      this.newStudents = []
       const User = await firebase.getCurrentUser()
       await db.collection('StudentList').where('userId', '==', User.uid).get()
         .then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
             this.newStudents.push({
+              docID: doc.id,
               StudentName: doc.data().studentName,
               StudentContact: doc.data().studentContact,
               ParentName: doc.data().parentName,
@@ -71,7 +78,14 @@ export default {
             })
           })
         })
+    },
+    async deleteStudentData (docId) {
+      await db.collection('StudentList').doc(docId).delete().then(this.importStudentData).catch((error) => { console.log(error) })
+    },
+    async editStudentData (docId) {
+      this.$router.push('/edit/studentdata/' + docId)
     }
+
   },
   async created  () {
     await this.importStudentData()
@@ -91,8 +105,13 @@ export default {
     })
 
     return {
+      onLeft ({ reset }) {
+        $q.notify('Left action triggered. Resetting in 1 second.')
+        finalize(reset)
+      },
       onRight ({ reset }) {
         $q.notify('Delete success')
+        console.log(reset)
         finalize(reset)
       }
     }

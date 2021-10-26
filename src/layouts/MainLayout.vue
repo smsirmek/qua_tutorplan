@@ -36,7 +36,7 @@
                 <q-icon name="article" />
               </q-item-section>
               <q-item-section>
-                Listpage
+                Student list
               </q-item-section>
             </q-item>
 

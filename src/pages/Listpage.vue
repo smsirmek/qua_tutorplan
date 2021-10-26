@@ -10,7 +10,7 @@
         align="justify"
         narrow-indicator
       >
-        <q-tab name="studentlist" label="Studentlist" />
+        <q-tab name="studentlist" label="Student list" />
       </q-tabs>
 
       <q-tab-panels v-model="tab">
