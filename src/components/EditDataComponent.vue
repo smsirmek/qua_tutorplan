@@ -87,7 +87,7 @@ components: { ListpageComponent },
             address: this.address
        }).then(() => {
            console.log('Update success')
-           this.addOn.addOnify({message:'Update success', color:'red'})
+           this.addOn.notify({message:'Update success', color:'red'})
            this.$router.back()
        }).catch((err) => {console.log(err)})
       }
