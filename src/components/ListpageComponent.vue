@@ -58,7 +58,7 @@ export default {
   data () {
     return {
       newStudents: [],
-      addOn: useQuasar()
+      quasarPlugin: useQuasar()
     }
   },
   methods: {
@@ -81,22 +81,22 @@ export default {
               Address: doc.data().address
             })
           })
-        }).catch((error) => { console.log(error) }, this.addOn.notify({ message: this.error, color: 'red' }))
+        }).catch((error) => { console.log(error) }, this.quasarPlugin.notify({ message: this.error, color: 'red' }))
       this.showLoading(false)
     },
     async deleteStudentData (docId) {
       await db.collection('StudentList').doc(docId).delete()
-        .then(this.importStudentData, this.addOn.notify({ message: 'Update success', color: 'red' }))
-        .catch((error) => { console.log(error) }, this.addOn.notify({ message: this.error, color: 'red' }))
+        .then(this.importStudentData, this.quasarPlugin.notify({ message: 'Update success', color: 'red' }))
+        .catch((error) => { console.log(error) }, this.quasarPlugin.notify({ message: this.error, color: 'red' }))
     },
     async editStudentData (docId) {
       this.$router.push('/edit/studentdata/' + docId)
     },
     showLoading (isLoading) {
       if (isLoading) {
-        this.addOn.loading.show()
+        this.quasarPlugin.loading.show()
       } else if (!isLoading) {
-        this.addOn.loading.hide()
+        this.quasarPlugin.loading.hide()
       }
     },
     refresh (done) {

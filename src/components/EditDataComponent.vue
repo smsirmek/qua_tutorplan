@@ -69,7 +69,7 @@ components: { ListpageComponent },
       parentName: null,
       parentContact: null,
       address: null,
-      addOn: useQuasar(),
+      quasarPlugin: useQuasar(),
     }
   },
   methods: {
@@ -87,7 +87,7 @@ components: { ListpageComponent },
             address: this.address
        }).then(() => {
            console.log('Update success')
-           this.addOn.notify({message:'Update success', color:'red'})
+           this.quasarPlugin.notify({message:'Update success', color:'red'})
            this.$router.back()
        }).catch((err) => {console.log(err)})
       }
@@ -109,10 +109,10 @@ components: { ListpageComponent },
     },
     showLoading (isLoading) {
       if(isLoading){
-        this.addOn.loading.show()
+        this.quasarPlugin.loading.show()
       }
       else if(!isLoading){
-        this.addOn.loading.hide()
+        this.quasarPlugin.loading.hide()
       }
     }
   },
