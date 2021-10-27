@@ -69,7 +69,7 @@ components: { ListpageComponent },
       parentName: null,
       parentContact: null,
       address: null,
-      not: useQuasar(),
+      ntfc: useQuasar(),
     }
   },
   methods: {
@@ -87,7 +87,7 @@ components: { ListpageComponent },
             address: this.address
        }).then(() => {
            console.log('Update success')
-           this.not.notify({message:'Update success', color:'red'})
+           this.ntfc.notify({message:'Update success', color:'red'})
            this.$router.back()
        }).catch((err) => {console.log(err)})
       }

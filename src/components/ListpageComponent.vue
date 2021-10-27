@@ -1,6 +1,7 @@
 <template>
   <div>
     <q-layout>
+      <q-pull-to-refresh @refresh="refresh">
       <q-list bordered class="rounded-borders">
 
       <q-item clickable v-ripple  v-for="newStudent in newStudents"
@@ -42,6 +43,7 @@
       <q-btn fab icon="add" color="primary" @click="goToAddStudentData"/>
       </q-page-sticky>
     </div>
+    </q-pull-to-refresh>
     </q-layout>
   </div>
 </template>
@@ -55,7 +57,8 @@ const db = firebase.firestore()
 export default {
   data () {
     return {
-      newStudents: []
+      newStudents: [],
+      ntfc: useQuasar()
     }
   },
   methods: {
@@ -63,6 +66,7 @@ export default {
       this.$router.push('/Add')
     },
     async importStudentData () {
+      this.showLoading(true)
       this.newStudents = []
       const User = await firebase.getCurrentUser()
       await db.collection('StudentList').where('userId', '==', User.uid).get()
@@ -78,12 +82,28 @@ export default {
             })
           })
         })
+      this.showLoading(false)
     },
     async deleteStudentData (docId) {
-      await db.collection('StudentList').doc(docId).delete().then(this.importStudentData).catch((error) => { console.log(error) })
+      await db.collection('StudentList').doc(docId).delete()
+        .then(this.importStudentData, this.ntfc.notify({ message: 'Update success', color: 'red' }))
+        .catch((error) => { console.log(error) })
     },
     async editStudentData (docId) {
       this.$router.push('/edit/studentdata/' + docId)
+    },
+    showLoading (isLoading) {
+      if (isLoading) {
+        this.ntfc.loading.show()
+      } else if (!isLoading) {
+        this.ntfc.loading.hide()
+      }
+    },
+    refresh (done) {
+      setTimeout(async () => {
+        await this.importStudentData()
+        done()
+      }, 1000)
     }
 
   },
