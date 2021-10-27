@@ -81,7 +81,7 @@ export default {
               Address: doc.data().address
             })
           })
-        }).catch((err) => { console.log(err) })
+        }).catch((error) => { console.log(error) }, this.addOn.notify({ message: this.error, color: 'red' }))
       this.showLoading(false)
     },
     async deleteStudentData (docId) {
