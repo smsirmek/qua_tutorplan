@@ -58,7 +58,7 @@ export default {
   data () {
     return {
       newStudents: [],
-      ntfc: useQuasar()
+      addOn: useQuasar()
     }
   },
   methods: {
@@ -81,29 +81,29 @@ export default {
               Address: doc.data().address
             })
           })
-        })
+        }).catch((err) => { console.log(err) })
       this.showLoading(false)
     },
     async deleteStudentData (docId) {
       await db.collection('StudentList').doc(docId).delete()
-        .then(this.importStudentData, this.ntfc.notify({ message: 'Update success', color: 'red' }))
-        .catch((error) => { console.log(error) })
+        .then(this.importStudentData, this.addOn.notify({ message: 'Update success', color: 'red' }))
+        .catch((error) => { console.log(error) }, this.addOn.notify({ message: this.error, color: 'red' }))
     },
     async editStudentData (docId) {
       this.$router.push('/edit/studentdata/' + docId)
     },
     showLoading (isLoading) {
       if (isLoading) {
-        this.ntfc.loading.show()
+        this.addOn.loading.show()
       } else if (!isLoading) {
-        this.ntfc.loading.hide()
+        this.addOn.loading.hide()
       }
     },
     refresh (done) {
       setTimeout(async () => {
         await this.importStudentData()
         done()
-      }, 1000)
+      }, 1500)
     }
 
   },

@@ -69,7 +69,7 @@ components: { ListpageComponent },
       parentName: null,
       parentContact: null,
       address: null,
-      ntfc: useQuasar(),
+      addOn: useQuasar(),
     }
   },
   methods: {
@@ -87,7 +87,7 @@ components: { ListpageComponent },
             address: this.address
        }).then(() => {
            console.log('Update success')
-           this.ntfc.notify({message:'Update success', color:'red'})
+           this.addOn.addOnify({message:'Update success', color:'red'})
            this.$router.back()
        }).catch((err) => {console.log(err)})
       }
@@ -109,10 +109,10 @@ components: { ListpageComponent },
     },
     showLoading (isLoading) {
       if(isLoading){
-        this.not.loading.show()
+        this.addOn.loading.show()
       }
       else if(!isLoading){
-        this.not.loading.hide()
+        this.addOn.loading.hide()
       }
     }
   },
