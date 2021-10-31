@@ -51,7 +51,6 @@
 <script>
 import firebase from 'firebase'
 import { useQuasar } from 'quasar'
-import { onBeforeUnmount } from 'vue'
 const db = firebase.firestore()
 
 export default {
@@ -63,7 +62,7 @@ export default {
   },
   methods: {
     goToAddStudentData () {
-      this.$router.push('/Add')
+      this.$router.push('/Add/studentlist')
     },
     async importStudentData () {
       this.showLoading(true)
@@ -81,13 +80,25 @@ export default {
               Address: doc.data().address
             })
           })
-        }).catch((error) => { console.log(error) }, this.quasarPlugin.notify({ message: this.error, color: 'red' }))
+        }).catch((error) => {
+          console.log(error)
+          this.quasar.notify({
+            type: 'negative',
+            message: `Error Code : ${error}`
+          })
+        })
       this.showLoading(false)
     },
     async deleteStudentData (docId) {
       await db.collection('StudentList').doc(docId).delete()
-        .then(this.importStudentData, this.quasarPlugin.notify({ message: 'Update success', color: 'red' }))
-        .catch((error) => { console.log(error) }, this.quasarPlugin.notify({ message: this.error, color: 'red' }))
+        .then((this.importStudentData), this.quasarPlugin.notify({ message: 'Delete success', color: 'red' }))
+        .catch((error) => {
+          console.log(error)
+          this.quasar.notify({
+            type: 'negative',
+            message: `Error Code : ${error}`
+          })
+        })
     },
     async editStudentData (docId) {
       this.$router.push('/edit/studentdata/' + docId)
@@ -109,32 +120,6 @@ export default {
   },
   async created  () {
     await this.importStudentData()
-  },
-  setup () {
-    const $q = useQuasar()
-    let timer
-
-    function finalize (reset) {
-      timer = setTimeout(() => {
-        reset()
-      }, 1000)
-    }
-
-    onBeforeUnmount(() => {
-      clearTimeout(timer)
-    })
-
-    return {
-      onLeft ({ reset }) {
-        $q.notify('Left action triggered. Resetting in 1 second.')
-        finalize(reset)
-      },
-      onRight ({ reset }) {
-        $q.notify('Delete success')
-        console.log(reset)
-        finalize(reset)
-      }
-    }
   }
 }
 

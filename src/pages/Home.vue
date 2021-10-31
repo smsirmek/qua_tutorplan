@@ -26,6 +26,9 @@
               <span> NOTE : this still just a dummy Data</span>
             </q-tab-panel>
         </q-tab-panels>
+        <q-page-sticky position="bottom-right" :offset="[23, 23]">
+      <q-btn fab icon="add" color="primary" @click="goToAddToDoList"/>
+      </q-page-sticky>
       </div>
     </div>
   </q-page>
@@ -55,6 +58,9 @@ export default {
 
   },
   methods: {
+    goToAddToDoList () {
+      this.$router.push('/Add/todolist')
+    }
   },
   computed: {
     eventsFn () {
