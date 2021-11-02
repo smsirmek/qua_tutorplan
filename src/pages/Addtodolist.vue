@@ -66,7 +66,7 @@
     <p class="q-px-md q-pt-sm">Alert</p>
           <q-select class="q-px-md q-mt-md" outlined v-model="model" :options="options" />
     <p class="q-px-md q-pt-md">Details</p>
-          <q-input v-model="Title" outlined type="textarea" class="q-px-md q-pd-md" />
+          <q-input v-model="Details" outlined type="textarea" class="q-px-md q-pd-md" />
     <div class="row q-pt-md">
         <p class="q-px-md q-pt-md">Amount</p>
         <div>
@@ -100,6 +100,8 @@
 <script>
 import { ref } from 'vue'
 import moment from 'moment'
+import firebase from 'firebase'
+const db = firebase.firestore()
 export default {
   data () {
     return {
@@ -107,7 +109,8 @@ export default {
       date: null,
       beginingTime: null,
       endingTime: null,
-      serviceCharge: null
+      serviceCharge: null,
+      Details: null
     }
   },
   setup () {
@@ -117,14 +120,25 @@ export default {
         'On', 'Off'
       ],
       name: ref(null),
-      names: [
-        'Ezw', 'Ktr'
-      ]
+      names: []
     }
   },
   methods: {
     backToHome () {
       this.$router.push('/home')
+    },
+    async importName () {
+      this.names = []
+      const User = await firebase.getCurrentUser()
+      await db.collection('StudentList').where('userId', '==', User.uid).get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            this.names.push({
+              docID: doc.id,
+              names: doc.data().studentName
+            })
+          })
+        })
     }
   },
   computed: {
@@ -135,13 +149,15 @@ export default {
       //  console.log(a)
       if (a % 60 !== 0) {
         b = a % 60
-        sum = [(a - b) + 60] / 60 * this.serviceCharge
+        sum = (((a - b) + 60) / 60) * this.serviceCharge
       } else {
         sum = (a / 60) * this.serviceCharge
       }
       return sum
     }
-
+  },
+  async created () {
+    await this.importName()
   }
 }
 </script>
