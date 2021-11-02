@@ -1,11 +1,7 @@
 <template>
 <div class="q-pa-md doc-container">
-  <q-input v-model="search" filled type="search">
-        <template v-slot:append>
-          <q-icon name="search" />
-        </template>
-      </q-input>
-
+  <q-saparetor />
+  <br><br>
   <q-table
     title="Transection"
     :rows="rows"
