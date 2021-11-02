@@ -10,7 +10,7 @@
     <p class="q-px-md q-pt-md">Title</p>
     <q-input v-model="title" outlined type="title" class="q-px-md q-pd-md" />
     <p class="q-px-md q-pt-md">Name</p>
-    <q-select class="q-px-md q-mt-md" outlined v-model="name" :options="names" />
+    <q-select class="q-px-md q-mt-md" outlined v-model="name" :options="studentNames" />
     <div class="row q-pt-md q-pb-md">
       <div>
         <p class="q-px-md q-pt-md">Date</p>
@@ -79,7 +79,7 @@
     <div class="row q-pt-md">
         <p class="q-px-md q-pt-md">Total</p>
         <div>
-        <q-input v-model="total" outlined type="title" class="q-px-sm q-pd-md" style="max-width: 220px"/>
+        <q-input v-model="totalServicecharge" outlined type="title" class="q-px-sm q-pd-md" style="max-width: 220px"/>
         </div>
         <div class="q-pt-md ">Baht
         </div>
@@ -99,7 +99,6 @@
 </template>
 
 <script>
-import { ref } from 'vue'
 import moment from 'moment'
 import firebase from 'firebase'
 const db = firebase.firestore()
@@ -111,17 +110,14 @@ export default {
       beginingTime: null,
       endingTime: null,
       serviceCharge: null,
-      details: null
-    }
-  },
-  setup () {
-    return {
-      alert: ref(null),
+      details: null,
+      studentNames: [],
+      documentid: [],
+      name: null,
+      alert: null,
       options: [
         'On', 'Off'
-      ],
-      name: ref(null),
-      names: []
+      ]
     }
   },
   methods: {
@@ -133,45 +129,65 @@ export default {
       await db.collection('StudentList').where('userId', '==', User.uid).get()
         .then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
-            this.names.push({
-              docID: doc.id,
-              names: doc.data().studentName
-            })
+            this.studentNames.push(doc.data().studentName)
+            this.documentid.push(doc.id)
           })
         })
     },
     async addNewtodolist () {
-      if (this.title && this.name && this.date && this.totaltime && this.alert && this.details && this.serviceCharge && this.sum) {
+      if (this.title && this.name && this.date && this.timeCalculator && this.alert && this.details && this.serviceCharge && this.totalServicecharge && this.beginingTime && this.endingTime) {
         await db.collection('Todolist').add({
           Title: this.title,
           Name: this.name,
           Date: this.date,
-          Timeinminutes: this.totaltime,
+          Timeinminutes: this.timeCalculator,
           Alert: this.alert,
           Details: this.details,
           Amountperhour: this.serviceCharge,
-          Totalservicecharge: this.sum
-        }).catch((err) => { alert('Error code', err) })
-        this.$router.push('/home')
+          Totalservicecharge: this.totalServicecharge,
+          BeginingTime: this.beginingTime,
+          EndingTime: this.endingTime
+        }).catch((err) => console.log(err)).finally(() => this.$router.push('/home'))
+      } else {
+        console.log(this.title)
+        console.log(this.name)
+        console.log(this.date)
+        console.log(this.timeCalculator)
+        console.log(this.alert)
+        console.log(this.details)
+        console.log(this.serviceCharge)
+        console.log(this.totalServicecharge)
       }
     }
   },
   computed: {
-    total () {
+    totalServicecharge () {
       let sum = 0
-      let b = 0
-      let totaltime = 0
-      const a = moment(this.endingTime, 'h:mm').diff(moment(this.beginingTime, 'h:mm'), 'minutes')
-      //  console.log(a)
-      if (a % 60 !== 0) {
-        b = a % 60
-        totaltime = (((a - b) + 60) / 60)
-        sum = totaltime * this.serviceCharge
+      let excessTime = 0
+      let finalTime = 0
+      const totalTime = moment(this.endingTime, 'h:mm').diff(moment(this.beginingTime, 'h:mm'), 'minutes')
+      if (totalTime % 60 !== 0) {
+        excessTime = totalTime % 60
+        finalTime = (((totalTime - excessTime) + 60) / 60)
+        sum = finalTime * this.serviceCharge
       } else {
-        sum = (a / 60) * this.serviceCharge
+        sum = (totalTime / 60) * this.serviceCharge
       }
       return sum
+    },
+    timeCalculator () {
+      let excessTime = 0
+      let finalTime = 0
+      const totalTime = moment(this.endingTime, 'h:mm').diff(moment(this.beginingTime, 'h:mm'), 'minutes')
+      if (totalTime % 60 !== 0) {
+        excessTime = totalTime % 60
+        finalTime = (((totalTime - excessTime) + 60) / 60)
+      } else {
+        finalTime = totalTime
+      }
+      return finalTime
     }
+
   },
   async created () {
     await this.importName()
