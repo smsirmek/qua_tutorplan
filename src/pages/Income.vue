@@ -1,4 +1,6 @@
 <template>
+ <q-page class="flex q-pa-md">
+    <q-card class="full-width">
   <div class="q-pa-md doc-container">
     <q-pull-to-refresh
       @refresh="refresh"
@@ -6,7 +8,7 @@
       bg-color="black"
       icon="autorenew"
     >
-    <q-card class="Inn-block item-center text-center">
+    <q-card class="Inn-block text-center">
             <span style="
       display: block;
       font-size: 2em;
@@ -27,7 +29,9 @@
     <q-card class="Date-card item-center" v-if="selectedRange.from != null">
       <div class="text-5 text-center text-weight-bold">{{selectedRange.from}} - {{selectedRange.to}}</div>
     </q-card>
-
+    <q-card class="Inn-card item-center" v-if="selectedRange.from === null">
+      <div class="text-5 text-center text-weight-bold">Please select date</div>
+    </q-card>
      <q-card class="Inn-card" v-for="(item,index) in IncomeData" :key="index">
       <div id="photo" >
       <q-item>
@@ -39,11 +43,11 @@
 
         <q-item-section>
           <q-item-label class="text-subtitle2">{{item.studentName}}</q-item-label>
-          <q-item-label caption> date {{item.confirmTime}}</q-item-label>
+          <q-item-label caption>{{item.confrimTime}}</q-item-label>
         </q-item-section>
 
         <q-item-section>
-          <q-item-label style="vertical-align:middle; margin-left: 50px" >+ {{item.income}} ฿</q-item-label>
+          <q-item-label style="vertical-align:middle; margin-left: 40px" >+ {{item.income}} ฿</q-item-label>
         </q-item-section>
       </q-item>
       </div>
@@ -64,11 +68,6 @@
           </div>
         </q-card>
       </q-dialog>
-
-    <q-card class="Inn-card item-center" v-if="selectedRange.from === null">
-      <div class="text-5 text-center text-weight-bold">Please select date</div>
-    </q-card>
-
     <q-dialog v-model="alert">
       <q-card>
         <q-card-section>
@@ -87,7 +86,8 @@
 
     </q-pull-to-refresh>
   </div>
-
+    </q-card>
+ </q-page>
 </template>
 
 <script>
@@ -121,7 +121,7 @@ export default {
             snapshot.forEach((doc) => {
               const obj = {}
               console.log(doc.data().confrimTime)
-              obj.confirmTime = moment(doc.data().confirmTime).format('L')
+              obj.confrimTime = moment.unix(doc.data().confrimTime).format('l')
               obj.income = doc.data().income
               obj.studentName = doc.data().studentName
               this.IncomeData.push(obj)
@@ -154,16 +154,12 @@ export default {
 <style scoped>
 .Inn-block {
   background-color: lightgrey;
-  width: 300px;
-  height: auto;
   border: 0.5px solid black;
   padding: 15px;
   margin: 20px;
 }
 .Date-card {
   background-color: rgb(243, 239, 239);
-  width: 300px;
-  height: auto;
   border: 0.5px solid rgb(139, 136, 136);
   padding: 15px;
   margin: 20px;

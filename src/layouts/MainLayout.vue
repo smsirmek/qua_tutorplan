@@ -42,7 +42,7 @@
 
             <q-item clickable v-ripple @click="nextPage('transaction')">
               <q-item-section avatar >
-                <q-icon name="paid" />
+                <q-icon name="receipt_long" />
               </q-item-section>
               <q-item-section>
                 Transaction
