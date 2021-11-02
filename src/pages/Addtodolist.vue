@@ -8,7 +8,7 @@
       @click="backToHome"
     />
     <p class="q-px-md q-pt-md">Title</p>
-    <q-input v-model="Title" outlined type="title" class="q-px-md q-pd-md" />
+    <q-input v-model="title" outlined type="title" class="q-px-md q-pd-md" />
     <p class="q-px-md q-pt-md">Name</p>
     <q-select class="q-px-md q-mt-md" outlined v-model="name" :options="names" />
     <div class="row q-pt-md q-pb-md">
@@ -28,9 +28,9 @@
           style="max-width: 112px"
         >
           <template v-slot:append>
-            <q-icon name="access_time" class="cursor-pointer">
+            <q-icon name="access_time" class="cursor-pointer" >
               <q-popup-proxy transition-show="scale" transition-hide="scale">
-                <q-time v-model="beginingTime">
+                <q-time v-model="beginingTime" format24h>
                   <div class="row items-center justify-end">
                     <q-btn v-close-popup label="Close" color="primary" flat />
                   </div>
@@ -48,11 +48,12 @@
           mask="time"
           :rules="['time']"
           style="max-width: 112px"
+          format24h
         >
           <template v-slot:append>
             <q-icon name="access_time" class="cursor-pointer">
               <q-popup-proxy transition-show="scale" transition-hide="scale">
-                <q-time v-model="endingTime">
+                <q-time v-model="endingTime" format24h>
                   <div class="row items-center justify-end">
                     <q-btn v-close-popup label="Close" color="primary" flat />
                   </div>
@@ -64,9 +65,9 @@
       </div>
     </div>
     <p class="q-px-md q-pt-sm">Alert</p>
-          <q-select class="q-px-md q-mt-md" outlined v-model="model" :options="options" />
+          <q-select class="q-px-md q-mt-md" outlined v-model="alert" :options="options" />
     <p class="q-px-md q-pt-md">Details</p>
-          <q-input v-model="Details" outlined type="textarea" class="q-px-md q-pd-md" />
+          <q-input v-model="details" outlined type="textarea" class="q-px-md q-pd-md" />
     <div class="row q-pt-md">
         <p class="q-px-md q-pt-md">Amount</p>
         <div>
@@ -90,7 +91,7 @@
           type="submit"
           color="primary"
           label="Add"
-          @click="backToHome"
+          @click="addNewtodolist"
         />
     </div>
 
@@ -105,17 +106,17 @@ const db = firebase.firestore()
 export default {
   data () {
     return {
-      Title: null,
+      title: null,
       date: null,
       beginingTime: null,
       endingTime: null,
       serviceCharge: null,
-      Details: null
+      details: null
     }
   },
   setup () {
     return {
-      model: ref(null),
+      alert: ref(null),
       options: [
         'On', 'Off'
       ],
@@ -128,7 +129,6 @@ export default {
       this.$router.push('/home')
     },
     async importName () {
-      this.names = []
       const User = await firebase.getCurrentUser()
       await db.collection('StudentList').where('userId', '==', User.uid).get()
         .then((querySnapshot) => {
@@ -139,17 +139,34 @@ export default {
             })
           })
         })
+    },
+    async addNewtodolist () {
+      if (this.title && this.name && this.date && this.totaltime && this.alert && this.details && this.serviceCharge && this.sum) {
+        await db.collection('Todolist').add({
+          Title: this.title,
+          Name: this.name,
+          Date: this.date,
+          Timeinminutes: this.totaltime,
+          Alert: this.alert,
+          Details: this.details,
+          Amountperhour: this.serviceCharge,
+          Totalservicecharge: this.sum
+        }).catch((err) => { alert('Error code', err) })
+        this.$router.push('/home')
+      }
     }
   },
   computed: {
     total () {
       let sum = 0
-      let b
+      let b = 0
+      let totaltime = 0
       const a = moment(this.endingTime, 'h:mm').diff(moment(this.beginingTime, 'h:mm'), 'minutes')
       //  console.log(a)
       if (a % 60 !== 0) {
         b = a % 60
-        sum = (((a - b) + 60) / 60) * this.serviceCharge
+        totaltime = (((a - b) + 60) / 60)
+        sum = totaltime * this.serviceCharge
       } else {
         sum = (a / 60) * this.serviceCharge
       }
