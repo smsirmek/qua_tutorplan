@@ -98,7 +98,9 @@ export default {
           this.$q.notify({ message: 'Sign In Success.' })
           this.$router.push('/home')
         })
-        .catch(error => { console.log(error) })
+        .catch(error => {
+          this.$q.notify({ message: `${error}` })
+        })
     },
     createUser (email, password) {
       console.log(email, password)
@@ -108,7 +110,8 @@ export default {
           this.$router.push('/home')
         })
         .catch(error => {
-          console.log(error)
+          console.log('error', error)
+          this.$q.notify({ message: `${error}` })
         })
     },
     forgotPassword () {
