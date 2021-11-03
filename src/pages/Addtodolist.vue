@@ -135,6 +135,7 @@ export default {
         })
     },
     async addNewtodolist () {
+      const User = await firebase.getCurrentUser()
       if (this.title && this.name && this.date && this.timeCalculator && this.alert && this.details && this.serviceCharge && this.totalServicecharge && this.beginingTime && this.endingTime) {
         await db.collection('Todolist').add({
           Title: this.title,
@@ -146,17 +147,9 @@ export default {
           Amountperhour: this.serviceCharge,
           Totalservicecharge: this.totalServicecharge,
           BeginingTime: this.beginingTime,
-          EndingTime: this.endingTime
+          EndingTime: this.endingTime,
+          userId: User.uid
         }).catch((err) => console.log(err)).finally(() => this.$router.push('/home'))
-      } else {
-        console.log(this.title)
-        console.log(this.name)
-        console.log(this.date)
-        console.log(this.timeCalculator)
-        console.log(this.alert)
-        console.log(this.details)
-        console.log(this.serviceCharge)
-        console.log(this.totalServicecharge)
       }
     }
   },

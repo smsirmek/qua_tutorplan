@@ -23,7 +23,6 @@
                   <span >Title : {{item}}</span>
                 </div>
               <br/>
-              <span> NOTE : this still just a dummy Data</span>
             </q-tab-panel>
         </q-tab-panels>
         <q-page-sticky position="bottom-right" :offset="[23, 23]">
@@ -35,7 +34,9 @@
 </template>
 
 <script>
+import firebase from 'firebase'
 import moment from 'moment'
+const db = firebase.firestore()
 export default {
   name: 'Home',
   data () {
@@ -43,23 +44,31 @@ export default {
       user: null,
       email: null,
       selectedDate: moment().locale('th').format('YYYY/MM/DD'),
-      Date: [
-        { eventDate: '2021/10/11', title: 'create by Plaithep', startTime: '10:30', endTime: '12:30' },
-        { eventDate: '2021/10/01', title: 'น้องปลายเทพเป็นคนทำให้เองเเหละ', startTime: '10:30', endTime: '12:30' },
-        { eventDate: '2021/10/05', title: 'น้องปลายเทพเป็นคนทำให้เองเเหละ', startTime: '10:30', endTime: '12:30' },
-        { eventDate: '2021/10/05', title: 'อย่าลืมให้ credit ปลายเทพ ด้วยนะครับ', startTime: '10:30', endTime: '12:30' },
-        { eventDate: '2021/10/26', title: 'ปลายเทพคนทำให้เองค้าบบ', startTime: '10:30', endTime: '12:30' },
-        { eventDate: '2021/10/15', title: 'ปลายเทพมันเองค้าบ', startTime: '10:30', endTime: '12:30' }
-      ],
+      Date: [],
       dummy: '2021/10/15'
     }
   },
-  created () {
-
+  async created () {
+    await this.importTodolist()
   },
   methods: {
     goToAddToDoList () {
       this.$router.push('/Add/todolist')
+    },
+    async importTodolist () {
+      const User = await firebase.getCurrentUser()
+      await db.collection('Todolist').where('userId', '==', User.uid).get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            this.Date.push({
+              eventDate: doc.data().Date,
+              title: doc.data().Title,
+              startTime: doc.data().BeginingTime,
+              endTime: doc.data().EndingTime,
+              docID: doc.id
+            })
+          })
+        }).catch((err) => console.log(err)).finally(() => console.log(this.Date))
     }
   },
   computed: {
