@@ -20,7 +20,15 @@
         >
             <q-tab-panel   :name="showEvent">
                 <div v-for="(item,index) in showEvetTitle" :key="index"  >
-                  <span >Title : {{item}}</span>
+                  <span >Student name : {{item.studentName}}</span>
+                  <br/>
+                  <span >Title : {{item.title}}</span>
+                  <br/>
+                  <span >Start time : {{item.startTime}}</span>
+                  <br/>
+                  <span >End time : {{item.endTime}}</span>
+                  <br/>
+                  <span >Details : {{item.details}}</span>
                 </div>
               <br/>
             </q-tab-panel>
@@ -49,22 +57,24 @@ export default {
     }
   },
   async created () {
-    await this.importTodolist()
+    await this.queryTodolist()
   },
   methods: {
     goToAddToDoList () {
       this.$router.push('/Add/todolist')
     },
-    async importTodolist () {
+    async queryTodolist () {
       const User = await firebase.getCurrentUser()
       await db.collection('Todolist').where('userId', '==', User.uid).get()
         .then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
             this.Date.push({
-              eventDate: doc.data().Date,
+              eventDate: moment(doc.data().Date).format('YYYY/MM/DD'),
               title: doc.data().Title,
               startTime: doc.data().BeginingTime,
               endTime: doc.data().EndingTime,
+              studentName: doc.data().Name,
+              details: doc.data().Details,
               docID: doc.id
             })
           })
@@ -90,7 +100,14 @@ export default {
       if (this.Date.some(e => e.eventDate === this.selectedDate)) {
         this.Date.forEach((item) => {
           if (item.eventDate === this.selectedDate) {
-            test.push(item.title)
+            const x = {}
+            x.eventDate = item.eventDate
+            x.title = item.title
+            x.startTime = item.startTime
+            x.endTime = item.endTime
+            x.studentName = item.studentName
+            x.details = item.details
+            test.push(x)
           }
         })
       }
