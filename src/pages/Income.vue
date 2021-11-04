@@ -1,4 +1,6 @@
 <template>
+ <q-page class="flex q-pa-md">
+    <q-card class="full-width">
   <div class="q-pa-md doc-container">
     <q-pull-to-refresh
       @refresh="refresh"
@@ -6,13 +8,8 @@
       bg-color="black"
       icon="autorenew"
     >
-    <div style="  background-color: lightgrey;
-  width: 300px;
-  border: 1px solid black;
-  padding: 15px;
-  margin: 20px;
-  text-align: center;" >
-      <span style="
+    <q-card class="Inn-block text-center">
+            <span style="
       display: block;
       font-size: 2em;
       margin: 0.67em 0;
@@ -22,22 +19,39 @@
         <span style=" font-size: 3em">{{totalIncome}}</span>
         <span> Bath</span>
       </div>
-    </div>
+    </q-card>
+
     <div style=" margin:10px;
     text-align: center;">
     <q-btn label="select date" icon="date_range" color="primary" @click="showDatePicker = true" />
     </div>
     <q-separator/>
-    <q-card class="Inn-block" v-for="(item,index) in IncomeData" :key="index">
-      <div id="photo" >
-        <q-avatar style="vertical-align:middle">
-          <img src="https://scontent.furt2-1.fna.fbcdn.net/v/t1.6435-9/131120282_1698174107023575_704994861676205759_n.jpg?_nc_cat=111&ccb=1-5&_nc_sid=174925&_nc_ohc=3dcQwcb8mTAAX8_AKFX&_nc_ht=scontent.furt2-1.fna&oh=ff5f570a604d72ee63269cf7d754c388&oe=619971AE">
-        </q-avatar>
-        <span style="vertical-align:middle"> {{item.studentName}}</span>
-        <span style="vertical-align:middle; margin-left: 100px" > + {{item.income}} ฿</span>
-      </div>
+    <q-card class="Date-card item-center" v-if="selectedRange.from != null">
+      <div class="text-5 text-center text-weight-bold">{{selectedRange.from}} - {{selectedRange.to}}</div>
     </q-card>
+    <q-card class="Inn-card item-center" v-if="selectedRange.from === null">
+      <div class="text-5 text-center text-weight-bold">Please select date</div>
+    </q-card>
+     <q-card class="Inn-card" v-for="(item,index) in IncomeData" :key="index">
+      <div id="photo" >
+      <q-item>
+        <q-item-section avatar>
+          <q-avatar>
+            <img src="https://cdn.quasar.dev/img/avatar2.jpg">
+          </q-avatar>
+        </q-item-section>
 
+        <q-item-section>
+          <q-item-label class="text-subtitle2">{{item.studentName}}</q-item-label>
+          <q-item-label caption>{{item.confrimTime}}</q-item-label>
+        </q-item-section>
+
+        <q-item-section>
+          <q-item-label style="vertical-align:middle; margin-left: 40px" >+ {{item.income}} ฿</q-item-label>
+        </q-item-section>
+      </q-item>
+      </div>
+  </q-card>
       <q-dialog v-model="showDatePicker">
         <q-card>
           <div>
@@ -54,11 +68,6 @@
           </div>
         </q-card>
       </q-dialog>
-
-    <q-card class="Inn-block item-center" v-if="selectedRange.from === null">
-      <div class="text-5 text-center text-weight-bold">Please select date</div>
-    </q-card>
-
     <q-dialog v-model="alert">
       <q-card>
         <q-card-section>
@@ -77,7 +86,8 @@
 
     </q-pull-to-refresh>
   </div>
-
+    </q-card>
+ </q-page>
 </template>
 
 <script>
@@ -98,8 +108,6 @@ export default {
   },
   methods: {
     async fecthData () {
-      console.log(this.selectedRange.to)
-      console.log(moment(this.selectedRange.from).unix())
       this.IncomeData = []
       const user = await firebase.getCurrentUser()
       await firebase.firestore().collection('Income')
@@ -112,6 +120,8 @@ export default {
           if (!snapshot.empty) {
             snapshot.forEach((doc) => {
               const obj = {}
+              console.log(doc.data().confrimTime)
+              obj.confrimTime = moment.unix(doc.data().confrimTime).format('l')
               obj.income = doc.data().income
               obj.studentName = doc.data().studentName
               this.IncomeData.push(obj)
@@ -144,10 +154,20 @@ export default {
 <style scoped>
 .Inn-block {
   background-color: lightgrey;
-  width: 300px;
-  height: auto;
   border: 0.5px solid black;
   padding: 15px;
   margin: 20px;
+}
+.Date-card {
+  background-color: rgb(243, 239, 239);
+  border: 0.5px solid rgb(139, 136, 136);
+  padding: 15px;
+  margin: 20px;
+}
+.Inn-card {
+  background-color: rgb(243, 239, 239);
+  border: 0.5px solid rgb(0, 27, 3);
+  padding: 5px;
+  margin: 10px;
 }
 </style>

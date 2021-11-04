@@ -14,6 +14,7 @@
           transition-prev="jump-up"
           transition-next="jump-up"
         >
+<<<<<<< HEAD
           <q-tab-panel :name="showEvent" class="bg-white-1 rounded-borders">
             <q-list bordered class="rounded-borders">
                 <q-item clickable v-ripple v-for="(item, index) in showEvetTitle" :key="index">
@@ -53,6 +54,16 @@
             </q-list>
             <br />
           </q-tab-panel>
+=======
+            <q-tab-panel   :name="showEvent">
+                <div v-for="(item,index) in showEvetTitle" :key="index"  >
+                  <span >Title : {{item.title}}</span>
+                  <br>
+                  <span> Details : {{item.details}}</span>
+                </div>
+              <br/>
+            </q-tab-panel>
+>>>>>>> main
         </q-tab-panels>
         <q-page-sticky position="bottom-right" :offset="[23, 23]">
           <q-btn fab icon="add" color="primary" @click="goToAddToDoList" />
@@ -74,8 +85,15 @@ export default {
       user: null,
       email: null,
       selectedDate: moment().locale('th').format('YYYY/MM/DD'),
+<<<<<<< HEAD
       Date: [],
       quasarPlugin: useQuasar()
+=======
+      Date: [
+        { eventDate: '2021/10/11', title: 'create by Plaithep', startTime: '10:30', endTime: '12:30', details: 'aasddfasdfasdf' }
+      ],
+      dummy: '2021/10/15'
+>>>>>>> main
     }
   },
   async created () {
@@ -100,7 +118,10 @@ export default {
               title: doc.data().Title,
               startTime: doc.data().BeginingTime,
               endTime: doc.data().EndingTime,
+<<<<<<< HEAD
               studentName: doc.data().Name,
+=======
+>>>>>>> main
               details: doc.data().Details,
               docID: doc.id
             })
@@ -162,6 +183,7 @@ export default {
       if (this.Date.some((e) => e.eventDate === this.selectedDate)) {
         this.Date.forEach((item) => {
           if (item.eventDate === this.selectedDate) {
+<<<<<<< HEAD
             const x = {}
             x.eventDate = item.eventDate
             x.title = item.title
@@ -171,6 +193,12 @@ export default {
             x.details = item.details
             x.docID = item.docID
             test.push(x)
+=======
+            const obj = {}
+            obj.title = item.title
+            obj.details = item.details
+            test.push(obj)
+>>>>>>> main
           }
         })
       }

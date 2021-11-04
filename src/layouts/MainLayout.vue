@@ -3,7 +3,7 @@
     <q-header elevated >
         <!-- บัคauthไม่เครีย-->
         <q-toolbar>
-          <q-btn v-show="this.user===null" flat @click="drawer = !drawer" round dense icon="menu" />
+          <q-btn v-show="this.email!=null" flat @click="drawer = !drawer" round dense icon="menu" />
           <q-toolbar-title>
             <div class="text-center">Tutorplan</div>
           </q-toolbar-title>
@@ -42,7 +42,7 @@
 
             <q-item clickable v-ripple @click="nextPage('transaction')">
               <q-item-section avatar >
-                <q-icon name="paid" />
+                <q-icon name="receipt_long" />
               </q-item-section>
               <q-item-section>
                 Transaction
@@ -96,8 +96,8 @@ export default defineComponent({
   name: 'MainLayout',
   data () {
     return {
-      user: '',
-      email: ''
+      user: null,
+      email: null
     }
   },
   components: {

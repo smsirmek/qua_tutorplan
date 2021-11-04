@@ -84,12 +84,16 @@ components: { ListpageComponent },
             studentContact: this.studentContact,
             parentName: this.parentName,
             parentContact: this.parentContact,
-            address: this.address
+            address: undefined
        }).then(() => {
            console.log('Update success')
            this.quasarPlugin.notify({message:'Update success', color:'red'})
            this.$router.back()
+<<<<<<< HEAD
        }).catch((err) => {this.quasarPlugin.notify({message: `Error ${err}`, color:'red'})})
+=======
+       }).catch((err) => { this.quasarPlugin.notify({message:`Error ${err}`, color:'red'})})
+>>>>>>> main
       }
 
     },
