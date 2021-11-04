@@ -20,19 +20,25 @@
         >
             <q-tab-panel   :name="showEvent">
                 <div v-for="(item,index) in showEvetTitle" :key="index"  >
-                  <span >Title : {{item}}</span>
+                  <span >Title : {{item.title}}</span>
+                  <br>
+                  <span> Details : {{item.details}}</span>
                 </div>
               <br/>
-              <span> NOTE : this still just a dummy Data</span>
             </q-tab-panel>
         </q-tab-panels>
+        <q-page-sticky position="bottom-right" :offset="[23, 23]">
+      <q-btn fab icon="add" color="primary" @click="goToAddToDoList"/>
+      </q-page-sticky>
       </div>
     </div>
   </q-page>
 </template>
 
 <script>
+import firebase from 'firebase'
 import moment from 'moment'
+const db = firebase.firestore()
 export default {
   name: 'Home',
   data () {
@@ -41,20 +47,34 @@ export default {
       email: null,
       selectedDate: moment().locale('th').format('YYYY/MM/DD'),
       Date: [
-        { eventDate: '2021/10/11', title: 'create by Plaithep', startTime: '10:30', endTime: '12:30' },
-        { eventDate: '2021/10/01', title: 'น้องปลายเทพเป็นคนทำให้เองเเหละ', startTime: '10:30', endTime: '12:30' },
-        { eventDate: '2021/10/05', title: 'น้องปลายเทพเป็นคนทำให้เองเเหละ', startTime: '10:30', endTime: '12:30' },
-        { eventDate: '2021/10/05', title: 'อย่าลืมให้ credit ปลายเทพ ด้วยนะครับ', startTime: '10:30', endTime: '12:30' },
-        { eventDate: '2021/10/26', title: 'ปลายเทพคนทำให้เองค้าบบ', startTime: '10:30', endTime: '12:30' },
-        { eventDate: '2021/10/15', title: 'ปลายเทพมันเองค้าบ', startTime: '10:30', endTime: '12:30' }
+        { eventDate: '2021/10/11', title: 'create by Plaithep', startTime: '10:30', endTime: '12:30', details: 'aasddfasdfasdf' }
       ],
       dummy: '2021/10/15'
     }
   },
-  created () {
-
+  async created () {
+    await this.importTodolist()
   },
   methods: {
+    goToAddToDoList () {
+      this.$router.push('/Add/todolist')
+    },
+    async importTodolist () {
+      const User = await firebase.getCurrentUser()
+      await db.collection('Todolist').where('userId', '==', User.uid).get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            this.Date.push({
+              eventDate: moment(doc.data().Date).format('YYYY/MM/DD'),
+              title: doc.data().Title,
+              startTime: doc.data().BeginingTime,
+              endTime: doc.data().EndingTime,
+              details: doc.data().Details,
+              docID: doc.id
+            })
+          })
+        }).catch((err) => console.log(err)).finally(() => console.log(this.Date))
+    }
   },
   computed: {
     eventsFn () {
@@ -75,7 +95,10 @@ export default {
       if (this.Date.some(e => e.eventDate === this.selectedDate)) {
         this.Date.forEach((item) => {
           if (item.eventDate === this.selectedDate) {
-            test.push(item.title)
+            const obj = {}
+            obj.title = item.title
+            obj.details = item.details
+            test.push(obj)
           }
         })
       }

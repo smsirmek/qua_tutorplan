@@ -1,6 +1,7 @@
 <template>
   <div>
     <q-layout>
+      <q-pull-to-refresh @refresh="refresh">
       <q-list bordered class="rounded-borders">
 
       <q-item clickable v-ripple  v-for="newStudent in newStudents"
@@ -42,6 +43,7 @@
       <q-btn fab icon="add" color="primary" @click="goToAddStudentData"/>
       </q-page-sticky>
     </div>
+    </q-pull-to-refresh>
     </q-layout>
   </div>
 </template>
@@ -49,20 +51,21 @@
 <script>
 import firebase from 'firebase'
 import { useQuasar } from 'quasar'
-import { onBeforeUnmount } from 'vue'
 const db = firebase.firestore()
 
 export default {
   data () {
     return {
-      newStudents: []
+      newStudents: [],
+      quasarPlugin: useQuasar()
     }
   },
   methods: {
     goToAddStudentData () {
-      this.$router.push('/Add')
+      this.$router.push('/Add/studentlist')
     },
     async importStudentData () {
+      this.showLoading(true)
       this.newStudents = []
       const User = await firebase.getCurrentUser()
       await db.collection('StudentList').where('userId', '==', User.uid).get()
@@ -77,44 +80,46 @@ export default {
               Address: doc.data().address
             })
           })
+        }).catch((error) => {
+          console.log(error)
+          this.quasar.notify({
+            type: 'negative',
+            message: `Error Code : ${error}`
+          })
         })
+      this.showLoading(false)
     },
     async deleteStudentData (docId) {
-      await db.collection('StudentList').doc(docId).delete().then(this.importStudentData).catch((error) => { console.log(error) })
+      await db.collection('StudentList').doc(docId).delete()
+        .then((this.importStudentData), this.quasarPlugin.notify({ message: 'Delete success', color: 'red' }))
+        .catch((error) => {
+          console.log(error)
+          this.quasar.notify({
+            type: 'negative',
+            message: `Error Code : ${error}`
+          })
+        })
     },
     async editStudentData (docId) {
       this.$router.push('/edit/studentdata/' + docId)
+    },
+    showLoading (isLoading) {
+      if (isLoading) {
+        this.quasarPlugin.loading.show()
+      } else if (!isLoading) {
+        this.quasarPlugin.loading.hide()
+      }
+    },
+    refresh (done) {
+      setTimeout(async () => {
+        await this.importStudentData()
+        done()
+      }, 1500)
     }
 
   },
   async created  () {
     await this.importStudentData()
-  },
-  setup () {
-    const $q = useQuasar()
-    let timer
-
-    function finalize (reset) {
-      timer = setTimeout(() => {
-        reset()
-      }, 1000)
-    }
-
-    onBeforeUnmount(() => {
-      clearTimeout(timer)
-    })
-
-    return {
-      onLeft ({ reset }) {
-        $q.notify('Left action triggered. Resetting in 1 second.')
-        finalize(reset)
-      },
-      onRight ({ reset }) {
-        $q.notify('Delete success')
-        console.log(reset)
-        finalize(reset)
-      }
-    }
   }
 }
 

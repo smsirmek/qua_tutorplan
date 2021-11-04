@@ -69,7 +69,7 @@ components: { ListpageComponent },
       parentName: null,
       parentContact: null,
       address: null,
-      not: useQuasar(),
+      quasarPlugin: useQuasar(),
     }
   },
   methods: {
@@ -84,12 +84,12 @@ components: { ListpageComponent },
             studentContact: this.studentContact,
             parentName: this.parentName,
             parentContact: this.parentContact,
-            address: this.address
+            address: undefined
        }).then(() => {
            console.log('Update success')
-           this.not.notify({message:'Update success', color:'red'})
+           this.quasarPlugin.notify({message:'Update success', color:'red'})
            this.$router.back()
-       }).catch((err) => {console.log(err)})
+       }).catch((err) => { this.quasarPlugin.notify({message:`Error ${err}`, color:'red'})})
       }
 
     },
@@ -109,10 +109,10 @@ components: { ListpageComponent },
     },
     showLoading (isLoading) {
       if(isLoading){
-        this.not.loading.show()
+        this.quasarPlugin.loading.show()
       }
       else if(!isLoading){
-        this.not.loading.hide()
+        this.quasarPlugin.loading.hide()
       }
     }
   },
