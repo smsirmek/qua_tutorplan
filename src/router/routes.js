@@ -6,7 +6,7 @@ const routes = [
     children: [
       { path: '/', component: () => import('pages/Auth.vue') },
       { path: '/home', component: () => import('pages/Home.vue'), meta: { requiresAuth: true } },
-      { path: '/list', component: () => import('pages/listpage.vue'), meta: { requiresAuth: true } },
+      { path: '/list', component: () => import('pages/Listpage'), meta: { requiresAuth: true } },
       { path: '/Add/studentlist', component: () => import('components/AddDataComponent.vue'), meta: { requiresAuth: true } },
       { path: '/Add/todolist', component: () => import('pages/Addtodolist.vue'), meta: { requiresAuth: true } },
       { path: '/profile', component: () => import('pages/Profile.vue'), meta: { requiresAuth: true } },
