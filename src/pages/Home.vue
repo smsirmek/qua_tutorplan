@@ -20,7 +20,9 @@
         >
             <q-tab-panel   :name="showEvent">
                 <div v-for="(item,index) in showEvetTitle" :key="index"  >
-                  <span >Title : {{item}}</span>
+                  <span >Title : {{item.title}}</span>
+                  <br>
+                  <span> Details : {{item.details}}</span>
                 </div>
               <br/>
             </q-tab-panel>
@@ -44,7 +46,9 @@ export default {
       user: null,
       email: null,
       selectedDate: moment().locale('th').format('YYYY/MM/DD'),
-      Date: [],
+      Date: [
+        { eventDate: '2021/10/11', title: 'create by Plaithep', startTime: '10:30', endTime: '12:30', details: 'aasddfasdfasdf' }
+      ],
       dummy: '2021/10/15'
     }
   },
@@ -61,10 +65,11 @@ export default {
         .then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
             this.Date.push({
-              eventDate: doc.data().Date,
+              eventDate: moment(doc.data().Date).format('YYYY/MM/DD'),
               title: doc.data().Title,
               startTime: doc.data().BeginingTime,
               endTime: doc.data().EndingTime,
+              details: doc.data().Details,
               docID: doc.id
             })
           })
@@ -90,7 +95,10 @@ export default {
       if (this.Date.some(e => e.eventDate === this.selectedDate)) {
         this.Date.forEach((item) => {
           if (item.eventDate === this.selectedDate) {
-            test.push(item.title)
+            const obj = {}
+            obj.title = item.title
+            obj.details = item.details
+            test.push(obj)
           }
         })
       }

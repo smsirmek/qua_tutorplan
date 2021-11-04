@@ -129,12 +129,15 @@ export default {
       await db.collection('StudentList').where('userId', '==', User.uid).get()
         .then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
-            this.studentNames.push(doc.data().studentName)
-            this.documentid.push(doc.id)
+            const obj = {}
+            obj.label = doc.data().studentName
+            obj.value = doc.id
+            this.studentNames.push(obj)
           })
         })
     },
     async addNewtodolist () {
+      console.log(this.name.value)
       const User = await firebase.getCurrentUser()
       if (this.title && this.name && this.date && this.timeCalculator && this.alert && this.details && this.serviceCharge && this.totalServicecharge && this.beginingTime && this.endingTime) {
         await db.collection('Todolist').add({
