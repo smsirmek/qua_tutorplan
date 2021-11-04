@@ -89,7 +89,8 @@ components: { ListpageComponent },
             studentContact: this.formData.studentContact,
             parentContact: this.formData.parentContact,
             address: this.formData.address,
-            userId: User.uid
+            userId: User.uid,
+            debt: 0
           }).catch((err)=>{alert('Error code',err)})
   this.$router.push('/list')
       }

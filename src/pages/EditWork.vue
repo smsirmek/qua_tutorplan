@@ -1,5 +1,6 @@
 <template>
   <div class="q-pa-md doc-container">
+      <q-banner class="bg-grey-3 rounded-borders">
     <q-btn
       class="glossy"
       round
@@ -7,7 +8,8 @@
       icon="arrow_back"
       @click="backToHome"
     />
-    <p class="q-px-md q-pt-md">Title</p>
+    <p class="q-px-md q-pt-md flex flex-center " >Edit Work</p>
+    <p class="q-px-md q-pt-sm">Title</p>
     <q-input v-model="title" outlined type="title" class="q-px-md q-pd-md" />
     <p class="q-px-md q-pt-md">Name</p>
     <q-select class="q-px-md q-mt-md" outlined v-model="name" :options="studentNames" />
@@ -71,7 +73,7 @@
     <div class="row q-pt-md">
         <p class="q-px-md q-pt-md">Amount</p>
         <div>
-        <q-input v-model="serviceCharge" outlined type="title" class="q-px-sm q-pd-md" style="max-width: 180px"/>
+        <q-input v-model.number="serviceCharge" outlined type="title" class="q-px-sm q-pd-md" style="max-width: 180px"/>
         </div>
         <div class="q-pt-md ">Baht/hour
         </div>
@@ -90,17 +92,18 @@
         size="md"
           type="submit"
           color="primary"
-          label="Add"
-          @click="addNewtodolist"
+          label="Edit"
+          @click="editWork"
         />
     </div>
-
+</q-banner>
   </div>
 </template>
 
 <script>
 import moment from 'moment'
 import firebase from 'firebase'
+import { useQuasar } from 'quasar'
 const db = firebase.firestore()
 export default {
   data () {
@@ -117,30 +120,34 @@ export default {
       alert: null,
       options: [
         'On', 'Off'
-      ]
+      ],
+      quasarPlugin: useQuasar()
     }
   },
   methods: {
     backToHome () {
       this.$router.push('/home')
     },
-    async importName () {
-      const User = await firebase.getCurrentUser()
-      await db.collection('StudentList').where('userId', '==', User.uid).get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            const obj = {}
-            obj.label = doc.data().studentName
-            obj.value = doc.id
-            this.studentNames.push(obj)
-          })
+    async queryWork () {
+      this.showLoading(true)
+      await db.collection('Todolist').doc(this.$route.params.Key).get()
+        .then((doc) => {
+          this.title = doc.data().Title
+          this.date = doc.data().Date
+          this.beginingTime = doc.data().BeginingTime
+          this.endingTime = doc.data().EndingTime
+          this.serviceCharge = doc.data().Amountperhour
+          this.details = doc.data().Details
+          this.name = doc.data().Name
+          this.alert = doc.data().Alert
+          this.timeCalculator = doc.data().Timeinminutes
         })
+      this.showLoading(false)
     },
-    async addNewtodolist () {
-      console.log(this.name.value)
+    async editWork () {
       const User = await firebase.getCurrentUser()
       if (this.title && this.name && this.date && this.timeCalculator && this.alert && this.details && this.serviceCharge && this.totalServicecharge && this.beginingTime && this.endingTime) {
-        await db.collection('Todolist').add({
+        await db.collection('Todolist').doc(this.$route.params.Key).update({
           Title: this.title,
           Name: this.name,
           Date: this.date,
@@ -152,7 +159,22 @@ export default {
           BeginingTime: this.beginingTime,
           EndingTime: this.endingTime,
           userId: User.uid
-        }).catch((err) => console.log(err)).finally(() => this.$router.push('/home'))
+        }).catch((err) => { console.log(err) })
+        this.$router.push('/home')
+      //  await this.updateStudentDebt()
+      }
+    },
+    // async updateStudentDebt () {
+    //   console.log(this.documentid)
+    //   await db.collection('studentList').doc(this.documentid).update({
+    //     debt: this.totalServicecharge
+    //   }).catch((err) => { console.log(err) })
+    // },
+    showLoading (isLoading) {
+      if (isLoading) {
+        this.quasarPlugin.loading.show()
+      } else if (!isLoading) {
+        this.quasarPlugin.loading.hide()
       }
     }
   },
@@ -186,7 +208,7 @@ export default {
 
   },
   async created () {
-    await this.importName()
+    await this.queryWork()
   }
 }
 </script>

@@ -89,7 +89,7 @@ components: { ListpageComponent },
            console.log('Update success')
            this.quasarPlugin.notify({message:'Update success', color:'red'})
            this.$router.back()
-       }).catch((err) => { this.quasarPlugin.notify({message:`Error ${err}`, color:'red'})})
+       }).catch((err) => {this.quasarPlugin.notify({message: `Error ${err}`, color:'red'})})
       }
 
     },
