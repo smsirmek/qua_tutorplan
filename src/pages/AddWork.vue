@@ -115,7 +115,7 @@ export default {
       details: null,
       studentNames: [],
       documentid: [],
-      name: [],
+      name: null,
       alert: null,
       options: [
         'On', 'Off'
@@ -135,11 +135,13 @@ export default {
             obj.label = doc.data().studentName
             obj.value = doc.id
             this.studentNames.push(obj)
+            this.Debt = doc.data().debt
           })
         })
     },
     async addNewtodolist () {
       console.log(this.name.value)
+      console.log(this.totalServicecharge)
       const User = await firebase.getCurrentUser()
       if (this.title && this.name && this.date && this.timeCalculator && this.alert && this.details && this.serviceCharge && this.totalServicecharge && this.beginingTime && this.endingTime) {
         await db.collection('Todolist').add({
@@ -155,17 +157,15 @@ export default {
           EndingTime: this.endingTime,
           userId: User.uid
         }).catch((err) => { console.log(err) })
+        await this.updateStudentDebt()
         this.$router.push('/home')
-      //  await this.updateStudentDebt()
       }
+    },
+    async updateStudentDebt () {
+      await db.collection('StudentList').doc(this.name.value).update({
+        debt: this.Debt + this.totalServicecharge
+      }).catch((err) => { console.log(err) }).then(() => { console.log('update success') })
     }
-    // async updateStudentDebt () {
-    //   console.log(this.documentid)
-    //   console.log(this.)
-    //   await db.collection('studentList').doc(this.documentid).update({
-    //     debt: this.totalServicecharge
-    //   }).catch((err) => { console.log(err) })
-    // }
   },
   computed: {
     totalServicecharge () {

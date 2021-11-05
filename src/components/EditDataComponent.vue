@@ -84,7 +84,7 @@ components: { ListpageComponent },
             studentContact: this.studentContact,
             parentName: this.parentName,
             parentContact: this.parentContact,
-            address: undefined
+            address: this.address
        }).then(() => {
            console.log('Update success')
            this.quasarPlugin.notify({message:'Update success', color:'red'})
