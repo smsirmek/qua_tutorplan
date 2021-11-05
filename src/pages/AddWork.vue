@@ -115,7 +115,7 @@ export default {
       details: null,
       studentNames: [],
       documentid: [],
-      name: null,
+      name: [],
       alert: null,
       options: [
         'On', 'Off'
@@ -161,6 +161,7 @@ export default {
     }
     // async updateStudentDebt () {
     //   console.log(this.documentid)
+    //   console.log(this.)
     //   await db.collection('studentList').doc(this.documentid).update({
     //     debt: this.totalServicecharge
     //   }).catch((err) => { console.log(err) })
