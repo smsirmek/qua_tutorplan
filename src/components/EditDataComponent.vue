@@ -98,7 +98,7 @@ components: { ListpageComponent },
         this.formData = []
         await firebase.firestore().collection('StudentList').doc(this.$route.params.Key)
         .get()
-        .then((doc) => {
+        .then((doc) => { 
              this.studentName = doc.data().studentName
              this.studentContact = doc.data().studentContact
              this.parentName = doc.data().parentName
