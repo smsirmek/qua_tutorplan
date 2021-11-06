@@ -135,13 +135,16 @@ export default {
             obj.label = doc.data().studentName
             obj.value = doc.id
             this.studentNames.push(obj)
-            this.Debt = doc.data().debt
           })
         })
     },
+    async queryDebt () {
+      await db.collection('StudentList').doc(this.name.value).get().then((doc) => { this.Debt = doc.data().debt })
+    },
     async addNewtodolist () {
       console.log(this.name.value)
-      console.log(this.totalServicecharge)
+      await this.queryDebt()
+      console.log(this.Debt)
       const User = await firebase.getCurrentUser()
       if (this.title && this.name && this.date && this.timeCalculator && this.alert && this.details && this.serviceCharge && this.totalServicecharge && this.beginingTime && this.endingTime) {
         await db.collection('Todolist').add({
