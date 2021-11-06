@@ -129,22 +129,18 @@ export default {
     async importName () {
       const User = await firebase.getCurrentUser()
       await db.collection('StudentList').where('userId', '==', User.uid).get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
+        .then((doc) => {
+          doc.forEach((doc) => {
             const obj = {}
             obj.label = doc.data().studentName
             obj.value = doc.id
+            obj.Debt = doc.data().debt
             this.studentNames.push(obj)
           })
+          console.log(this.studentNames)
         })
     },
-    async queryDebt () {
-      await db.collection('StudentList').doc(this.name.value).get().then((doc) => { this.Debt = doc.data().debt })
-    },
     async addNewtodolist () {
-      console.log(this.name.value)
-      await this.queryDebt()
-      console.log(this.Debt)
       const User = await firebase.getCurrentUser()
       if (this.title && this.name && this.date && this.timeCalculator && this.alert && this.details && this.serviceCharge && this.totalServicecharge && this.beginingTime && this.endingTime) {
         await db.collection('Todolist').add({
@@ -166,7 +162,7 @@ export default {
     },
     async updateStudentDebt () {
       await db.collection('StudentList').doc(this.name.value).update({
-        debt: this.Debt + this.totalServicecharge
+        debt: this.name.Debt + this.totalServicecharge
       }).catch((err) => { console.log(err) }).then(() => { console.log('update success') })
     }
   },
