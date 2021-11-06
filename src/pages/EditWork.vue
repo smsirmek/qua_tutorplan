@@ -141,7 +141,8 @@ export default {
           this.name = doc.data().Name
           this.alert = doc.data().Alert
           this.timeCalculator = doc.data().Timeinminutes
-        })
+        }).catch((err) => { console.log(err) })
+      console.log(this.name)
       this.showLoading(false)
     },
     async editWork () {
@@ -160,16 +161,16 @@ export default {
           EndingTime: this.endingTime,
           userId: User.uid
         }).catch((err) => { console.log(err) })
+        await this.updateStudentDebt()
         this.$router.push('/home')
-      //  await this.updateStudentDebt()
       }
     },
-    // async updateStudentDebt () {
-    //   console.log(this.documentid)
-    //   await db.collection('studentList').doc(this.documentid).update({
-    //     debt: this.totalServicecharge
-    //   }).catch((err) => { console.log(err) })
-    // },
+    async updateStudentDebt () {
+      console.log(this.name.value)
+      await db.collection('StudentList').doc(this.name.value).update({
+        debt: this.totalServicecharge
+      }).catch((err) => { console.log(err) })
+    },
     showLoading (isLoading) {
       if (isLoading) {
         this.quasarPlugin.loading.show()
