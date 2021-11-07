@@ -9,25 +9,25 @@
       @click="backToHome"
     />
     <p class="q-px-md q-pt-md flex flex-center " >Edit Work</p>
-    <p class="q-px-md q-pt-sm">Title</p>
+    <p class="q-px-sm q-pt-sm">Title</p>
     <q-input v-model="title" outlined type="title" class="q-px-md q-pd-md" />
-    <p class="q-px-md q-pt-md">Name</p>
+    <p class="q-px-sm q-pt-md">Name</p>
     <q-select class="q-px-md q-mt-md" outlined v-model="name" :options="studentNames" />
     <div class="row q-pt-md q-pb-md">
       <div>
-        <p class="q-px-md q-pt-md">Date</p>
+        <p class="q-px-sm q-pt-md">Date</p>
       </div>
       <q-input v-model="date" filled type="date" hint="Native date" />
     </div>
     <div class="row">
-      <div class="q-px-md q-pt-md">Time</div>
+      <div class="q-px-sm q-pt-md">Time</div>
       <div>
         <q-input
           filled
           v-model="beginingTime"
           mask="time"
           :rules="['time']"
-          style="max-width: 112px"
+          style="max-width: 105px"
         >
           <template v-slot:append>
             <q-icon name="access_time" class="cursor-pointer" >
@@ -49,7 +49,7 @@
           v-model="endingTime"
           mask="time"
           :rules="['time']"
-          style="max-width: 112px"
+          style="max-width: 105px"
           format24h
         >
           <template v-slot:append>
@@ -66,14 +66,14 @@
         </q-input>
       </div>
     </div>
-    <p class="q-px-md q-pt-sm">Alert</p>
+    <p class="q-px-sm q-pt-sm">Alert</p>
           <q-select class="q-px-md q-mt-md" outlined v-model="alert" :options="options" />
-    <p class="q-px-md q-pt-md">Details</p>
+    <p class="q-px-sm q-pt-md">Details</p>
           <q-input v-model="details" outlined type="textarea" class="q-px-md q-pd-md" />
     <div class="row q-pt-md">
         <p class="q-px-md q-pt-md">Amount</p>
         <div>
-        <q-input v-model.number="serviceCharge" outlined type="title" class="q-px-sm q-pd-md" style="max-width: 180px"/>
+        <q-input v-model.number="serviceCharge" outlined type="title" class="q-px-sm q-pd-md" style="max-width: 140px"/>
         </div>
         <div class="q-pt-md ">Baht/hour
         </div>
@@ -81,7 +81,7 @@
     <div class="row q-pt-md">
         <p class="q-px-md q-pt-md">Total</p>
         <div>
-        <q-input v-model="totalServicecharge" outlined type="title" class="q-px-sm q-pd-md" style="max-width: 220px"/>
+        <q-input v-model="totalServicecharge" outlined type="title" class="q-px-sm q-pd-md" style="max-width: 180px"/>
         </div>
         <div class="q-pt-md ">Baht
         </div>
@@ -141,7 +141,8 @@ export default {
           this.name = doc.data().Name
           this.alert = doc.data().Alert
           this.timeCalculator = doc.data().Timeinminutes
-        })
+        }).catch((err) => { console.log(err) })
+      console.log(this.name)
       this.showLoading(false)
     },
     async editWork () {
@@ -160,16 +161,16 @@ export default {
           EndingTime: this.endingTime,
           userId: User.uid
         }).catch((err) => { console.log(err) })
+        await this.updateStudentDebt()
         this.$router.push('/home')
-      //  await this.updateStudentDebt()
       }
     },
-    // async updateStudentDebt () {
-    //   console.log(this.documentid)
-    //   await db.collection('studentList').doc(this.documentid).update({
-    //     debt: this.totalServicecharge
-    //   }).catch((err) => { console.log(err) })
-    // },
+    async updateStudentDebt () {
+      console.log(this.name.value)
+      await db.collection('StudentList').doc(this.name.value).update({
+        debt: this.totalServicecharge
+      }).catch((err) => { console.log(err) })
+    },
     showLoading (isLoading) {
       if (isLoading) {
         this.quasarPlugin.loading.show()

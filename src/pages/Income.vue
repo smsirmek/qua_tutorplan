@@ -102,7 +102,6 @@ export default {
       IncomeData: [],
       showDatePicker: false,
       alert: false,
-      // ? setting defaul valuse
       selectedRange: { from: null, to: null }
     }
   },
@@ -121,7 +120,7 @@ export default {
             snapshot.forEach((doc) => {
               const obj = {}
               console.log(doc.data().confrimTime)
-              obj.confrimTime = moment.unix(doc.data().confrimTime).format('l')
+              obj.confrimTime = moment.unix(doc.data().confrimTime).format('DD/MM/YYYY')
               obj.income = doc.data().income
               obj.studentName = doc.data().studentName
               this.IncomeData.push(obj)

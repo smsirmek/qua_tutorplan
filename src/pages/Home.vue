@@ -30,7 +30,7 @@
                           <q-item-section outlined>
                             <q-item-label lines="1"
                               >Student name :
-                              {{ item.studentName }}</q-item-label
+                              {{ item.studentName.label }}</q-item-label
                             >
                             <q-item-label lines="2"
                               >Title : {{ item.title }}</q-item-label
@@ -90,7 +90,7 @@ export default {
       this.Date = []
       const User = await firebase.getCurrentUser()
       await db
-        .collection('Todolist')
+        .collection('WorkList')
         .where('userId', '==', User.uid)
         .get()
         .then((querySnapshot) => {
@@ -176,7 +176,6 @@ export default {
       }
       return test
     }
-    // console.log()
   }
 }
 </script>
