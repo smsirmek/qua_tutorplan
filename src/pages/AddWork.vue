@@ -104,6 +104,7 @@
 import moment from 'moment'
 import firebase from 'firebase'
 const db = firebase.firestore()
+let User
 export default {
   data () {
     return {
@@ -127,7 +128,7 @@ export default {
       this.$router.push('/home')
     },
     async importName () {
-      const User = await firebase.getCurrentUser()
+      console.log(User.uid)
       await db.collection('StudentList').where('userId', '==', User.uid).get()
         .then((doc) => {
           doc.forEach((doc) => {
@@ -141,9 +142,8 @@ export default {
         })
     },
     async addNewtodolist () {
-      const User = await firebase.getCurrentUser()
       if (this.title && this.name && this.date && this.timeCalculator && this.alert && this.details && this.serviceCharge && this.totalServicecharge && this.beginingTime && this.endingTime) {
-        await db.collection('Todolist').add({
+        await db.collection('WorkList').add({
           Title: this.title,
           Name: this.name,
           Date: this.date,
@@ -157,6 +157,7 @@ export default {
           userId: User.uid
         }).catch((err) => { console.log(err) })
         await this.updateStudentDebt()
+        await this.createStudentBill()
         this.$router.push('/home')
       }
     },
@@ -164,6 +165,26 @@ export default {
       await db.collection('StudentList').doc(this.name.value).update({
         debt: this.name.Debt + this.totalServicecharge
       }).catch((err) => { console.log(err) }).then(() => { console.log('update success') })
+    },
+    async createStudentBill () {
+      const m = moment(this.endingTime, 'h:mm').diff(moment(this.beginingTime, 'h:mm'), 'minutes')
+      const hours = Math.floor(m / 60)
+      const minutes = m % 60
+      let prepare
+      if (minutes !== 0) {
+        let x = + minutes * 0.01
+        prepare = hours + x
+      } else {
+        prepare = hours
+      }
+      await db.collection('Bill').add({
+        Date: moment(this.date).format('DD/MM/YYYY'),
+        Hour: prepare,
+        Total: this.totalServicecharge,
+        paid: false,
+        studentName: this.name.label,
+        userId: User.uid
+      })
     }
   },
   computed: {
@@ -196,6 +217,7 @@ export default {
 
   },
   async created () {
+    User = await firebase.getCurrentUser()
     await this.importName()
   }
 }

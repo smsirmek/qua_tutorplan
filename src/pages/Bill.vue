@@ -92,6 +92,7 @@ export default {
       await firebase.firestore().collection('Bill')
         .where('studentName', '==', this.$route.params.id)
         .where('paid', '==', false)
+        .orderBy('Date' ,'desc')
         .get()
         .then((snapshot) => {
           snapshot.forEach((doc) => {

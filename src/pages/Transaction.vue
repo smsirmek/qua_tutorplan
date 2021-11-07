@@ -4,7 +4,7 @@
   <br><br>
   <q-table
     title="Transection"
-    :rows="rows"
+    :rows="studentList"
     :columns="columns"
     row-key="name"
   >
@@ -29,6 +29,9 @@
 <script>
 import { useQuasar } from 'quasar'
 import { ref } from 'vue'
+import firebase from 'firebase'
+const db = firebase.firestore()
+let User
 export default {
   setup () {
     return {
@@ -40,6 +43,21 @@ export default {
   methods: {
     billPage (studentName) {
       this.$router.push('/bill/' + studentName)
+    },
+    async queryTransactionData () {
+      let prepareArray = []
+      const snapshot = await db.collection('Bill').where('userId' ,'==', User.uid).where('paid' ,'==', false).get()
+      snapshot.forEach((doc) =>{
+        let obj = {}
+        obj.studentName = doc.data().studentName
+        obj.TotalSum = doc.data().Total
+        prepareArray.push(obj)
+      })
+
+      const res = Array.from(prepareArray.reduce(
+        (m, {studentName, TotalSum}) => m.set(studentName, (m.get(studentName) || 0) + TotalSum), new Map
+      ), ([name, TotalSum]) => ({name, TotalSum}));
+      this.studentList = res
     }
   },
   data () {
@@ -56,34 +74,12 @@ export default {
       { name: 'TotalSum', align: 'center', label: 'TotalSum', field: 'TotalSum', sortable: true },
       { name: 'bill', label: 'Bill', field: 'Bill', sortable: true, align: 'center' }
       ],
-      rows: [
-        {
-          name: 'student1',
-          TotalSum: 159,
-          bill: 6.0
-        },
-        {
-          name: 'student2',
-          TotalSum: 237,
-          bill: 9.0
-        },
-        {
-          name: 'student3',
-          TotalSum: 262,
-          bill: 16.0
-        },
-        {
-          name: 'student4',
-          TotalSum: 305,
-          bill: 3.7
-        },
-        {
-          name: 'student5',
-          TotalSum: 356,
-          bill: 16.0
-        }
-      ]
+      studentList: []
     }
+  },
+  async created () {
+    User = await firebase.getCurrentUser()
+    await this.queryTransactionData()
   }
 }
 </script>

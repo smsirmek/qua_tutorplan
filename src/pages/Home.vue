@@ -90,7 +90,7 @@ export default {
       this.Date = []
       const User = await firebase.getCurrentUser()
       await db
-        .collection('Todolist')
+        .collection('WorkList')
         .where('userId', '==', User.uid)
         .get()
         .then((querySnapshot) => {
