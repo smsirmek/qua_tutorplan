@@ -130,7 +130,7 @@ export default {
     },
     async queryWork () {
       this.showLoading(true)
-      await db.collection('Todolist').doc(this.$route.params.Key).get()
+      await db.collection('WorkList').doc(this.$route.params.Key).get()
         .then((doc) => {
           this.title = doc.data().Title
           this.date = doc.data().Date
@@ -148,7 +148,7 @@ export default {
     async editWork () {
       const User = await firebase.getCurrentUser()
       if (this.title && this.name && this.date && this.timeCalculator && this.alert && this.details && this.serviceCharge && this.totalServicecharge && this.beginingTime && this.endingTime) {
-        await db.collection('Todolist').doc(this.$route.params.Key).update({
+        await db.collection('WorkList').doc(this.$route.params.Key).update({
           Title: this.title,
           Name: this.name,
           Date: this.date,

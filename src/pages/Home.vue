@@ -111,7 +111,7 @@ export default {
     },
     async deleteStudentData (docID) {
       await db
-        .collection('Todolist')
+        .collection('WorkList')
         .doc(docID)
         .delete()
         .then(

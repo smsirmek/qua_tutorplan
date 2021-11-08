@@ -17,9 +17,11 @@
       <div>
         <p class="q-px-sm q-pt-md">Date</p>
       </div>
-      <q-input v-model="date" filled type="date" hint="Native date" />
+      <div class="q-px-md q-pt-sm">
+      <q-date v-model="date" filled type="date" hint="Native date" range multiple />
+      </div>
     </div>
-    <div class="row">
+    <div class="row q-pt-md">
       <div class="q-px-sm q-pt-md">Time</div>
       <div>
         <q-input
@@ -66,8 +68,6 @@
         </q-input>
       </div>
     </div>
-    <p class="q-px-sm q-pt-sm">Alert</p>
-          <q-select class="q-px-md q-mt-md" outlined v-model="alert" :options="options" />
     <p class="q-px-sm q-pt-md">Details</p>
           <q-input v-model="details" outlined type="textarea" class="q-px-md q-pd-md" />
     <div class="row q-pt-md">
@@ -109,7 +109,7 @@ export default {
   data () {
     return {
       title: null,
-      date: null,
+      date: [],
       beginingTime: null,
       endingTime: null,
       serviceCharge: null,
@@ -138,17 +138,15 @@ export default {
             obj.Debt = doc.data().debt
             this.studentNames.push(obj)
           })
-          console.log(this.studentNames)
         })
     },
     async addNewtodolist () {
-      if (this.title && this.name && this.date && this.timeCalculator && this.alert && this.details && this.serviceCharge && this.totalServicecharge && this.beginingTime && this.endingTime) {
+      if (this.title && this.name && this.date && this.timeCalculator  && this.details && this.serviceCharge && this.totalServicecharge && this.beginingTime && this.endingTime) {
         await db.collection('WorkList').add({
           Title: this.title,
           Name: this.name,
           Date: this.date,
           Timeinminutes: this.timeCalculator,
-          Alert: this.alert,
           Details: this.details,
           Amountperhour: this.serviceCharge,
           Totalservicecharge: this.totalServicecharge,
