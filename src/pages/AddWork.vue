@@ -18,7 +18,7 @@
         <p class="q-px-sm q-pt-md">Date</p>
       </div>
       <div class="q-px-md q-pt-sm">
-      <q-date v-model="date" filled type="date" hint="Native date" range multiple />
+      <q-date v-model="date" filled type="date" hint="Native date" multiple />
       </div>
     </div>
     <div class="row q-pt-md">
@@ -103,6 +103,7 @@
 <script>
 import moment from 'moment'
 import firebase from 'firebase'
+import { useQuasar } from 'quasar'
 const db = firebase.firestore()
 let User
 export default {
@@ -120,7 +121,8 @@ export default {
       alert: null,
       options: [
         'On', 'Off'
-      ]
+      ],
+      quasarPlugin: useQuasar()
     }
   },
   methods: {
@@ -128,7 +130,6 @@ export default {
       this.$router.push('/home')
     },
     async importName () {
-      console.log(User.uid)
       await db.collection('StudentList').where('userId', '==', User.uid).get()
         .then((doc) => {
           doc.forEach((doc) => {
@@ -141,11 +142,13 @@ export default {
         })
     },
     async addNewtodolist () {
+      console.log(this.timeCalculator)
       if (this.title && this.name && this.date && this.timeCalculator  && this.details && this.serviceCharge && this.totalServicecharge && this.beginingTime && this.endingTime) {
+        for(let i=0;i<this.date.length;i++) {
         await db.collection('WorkList').add({
           Title: this.title,
           Name: this.name,
-          Date: this.date,
+          Date: this.date[i],
           Timeinminutes: this.timeCalculator,
           Details: this.details,
           Amountperhour: this.serviceCharge,
@@ -154,6 +157,7 @@ export default {
           EndingTime: this.endingTime,
           userId: User.uid
         }).catch((err) => { console.log(err) })
+        }
         await this.updateStudentDebt()
         await this.createStudentBill()
         this.$router.push('/home')
@@ -183,6 +187,7 @@ export default {
         studentName: this.name.label,
         userId: User.uid
       })
+
     }
   },
   computed: {
@@ -190,6 +195,7 @@ export default {
       let sum = 0
       let excessTime = 0
       let finalTime = 0
+      if(moment(this.beginingTime, 'h:mm').isBefore(moment(this.endingTime,'h:mm'))){
       const totalTime = moment(this.endingTime, 'h:mm').diff(moment(this.beginingTime, 'h:mm'), 'minutes')
       if (totalTime % 60 !== 0) {
         excessTime = totalTime % 60
@@ -199,10 +205,12 @@ export default {
         sum = (totalTime / 60) * this.serviceCharge
       }
       return sum
+    }
     },
     timeCalculator () {
       let excessTime = 0
       let finalTime = 0
+      if(moment(this.beginingTime, 'h:mm').isBefore(moment(this.endingTime, 'h:mm'))){
       const totalTime = moment(this.endingTime, 'h:mm').diff(moment(this.beginingTime, 'h:mm'), 'minutes')
       if (totalTime % 60 !== 0) {
         excessTime = totalTime % 60
@@ -211,6 +219,11 @@ export default {
         finalTime = totalTime
       }
       return finalTime
+      }else{
+        this.quasarPlugin.notify(
+          {message: 'Please select new time', color: 'red'}
+          )
+       }
     }
 
   },
