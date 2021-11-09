@@ -1,5 +1,6 @@
 /dist
 /src
+/src/boot
 /src-bex/www
 /src-capacitor
 /src-cordova
