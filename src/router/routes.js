@@ -15,7 +15,7 @@ const routes = [
       { path: '/income', component: () => import('pages/Income.vue'), meta: { requiresAuth: true } },
       { path: '/edit/studentdata/:Key', component: () => import('components/EditDataComponent.vue'), meta: { requiresAuth: true } },
       { path: '/edit/work/:Key', component: () => import('pages/EditWork.vue'), meta: { requiresAuth: true } },
-      { path: '/esig', component: () => import('pages/eSig.vue'), meta: { requiresAuth: true } },
+      { path: '/esig/:id', component: () => import('pages/eSig.vue'), meta: { requiresAuth: true } },
     ]
   },
 
