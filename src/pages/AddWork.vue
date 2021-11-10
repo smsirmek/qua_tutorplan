@@ -93,7 +93,7 @@
           type="submit"
           color="primary"
           label="Add"
-          @click="addNewtodolist"
+          @click="setUpLogic"
         />
     </div>
     </q-banner>
@@ -122,7 +122,8 @@ export default {
       options: [
         'On', 'Off'
       ],
-      quasarPlugin: useQuasar()
+      quasarPlugin: useQuasar(),
+      Check: []
     }
   },
   methods: {
@@ -142,8 +143,6 @@ export default {
         })
     },
     async addNewtodolist () {
-      console.log(this.timeCalculator)
-      if (this.title && this.name && this.date && this.timeCalculator  && this.details && this.serviceCharge && this.totalServicecharge && this.beginingTime && this.endingTime) {
         for(let i=0;i<this.date.length;i++) {
         await db.collection('WorkList').add({
           Title: this.title,
@@ -158,9 +157,72 @@ export default {
           userId: User.uid
         }).catch((err) => { console.log(err) })
         }
-        await this.updateStudentDebt()
+        
+    },
+    async queryDate () {
+      await db.collection('WorkList').where('userId', '==', User.uid).get()
+      .then((doc) => {
+        doc.forEach((doc) => {
+          const obj = {}
+        obj.beginTime  = moment(doc.data().Date).format('YYYY-MM-DD').concat(' '+ doc.data().BeginingTime)
+        obj.endTime = moment(doc.data().Date).format('YYYY-MM-DD').concat(' '+ doc.data().EndingTime)
+          this.Check.push(obj)
+        })
+      })
+    },
+    // moment('2010-10-20').isBetween('2010-10-19', '2010-10-25');   
+    async checkDateTime () {
+      {
+      for(let i=0; i<this.Check.length; i++){
+          for(let j=0; j<this.date.length; j++){
+            console.log('checkDateTime run '+j)
+            const timeAddBegin = moment(this.date[j]).format('YYYY-MM-DD').concat(' '+this.beginingTime)
+            const timeAddEnd = moment(this.date[j]).format('YYYY-MM-DD').concat(' '+this.endingTime)
+            const checkTimeBetween = moment(timeAddBegin).isBetween(this.Check[i].beginTime, this.Check[i].endTime)
+            const checkTimeBetweenEnd = moment(timeAddEnd).isBetween(this.Check[i].beginTime, this.Check[i].endTime)
+            const checkBeginTime = moment(timeAddBegin).isSame(moment(this.Check[i].beginTime))
+            const checkEndTime = moment(timeAddEnd).isSame(moment(this.Check[i].endTime))
+            const checkQueryTimeBetween = moment(this.Check[i].beginTime).isBetween(timeAddBegin, timeAddEnd)
+            const log = console.log
+            // log('pickedday '+this.date[j])
+            // log(this.Check[i].beginTime)
+            // log(this.Check[i].endTime)
+            // log(timeAddBegin)
+            // log(timeAddEnd)
+            // log(checkTimeBetween)
+            // log(checkTimeBetweenEnd)
+            // log(checkBeginTime)
+            // log(checkEndTime)
+            // log(checkQueryTimeBetween)
+            if(checkTimeBetween || checkBeginTime || checkEndTime || checkTimeBetweenEnd || checkQueryTimeBetween){
+              this.quasarPlugin.notify({message: `Schedule conflict`, color: 'red'})
+              return true
+            }else{
+              console.log('มันไม่ชนนะ')
+              }
+          }          
+      }
+      return false
+      }
+    },
+    async setUpLogic () {
+      const checkDateTime = await this.checkDateTime()
+      const checkValidate = await this.inputValidate()
+      const log = console.log
+      if(checkValidate && !checkDateTime || checkDateTime === undefined){
+      // log(checkDateTime)
+      // log(checkValidate)
+         await  this.addNewtodolist()
+         await this.updateStudentDebt()
         await this.createStudentBill()
-        this.$router.push('/home')
+       this.$router.push('/home')
+      }
+    },
+    async inputValidate (){
+      if (this.title && this.name && this.date && this.timeCalculator  && this.details && this.serviceCharge && this.totalServicecharge && this.beginingTime && this.endingTime){
+        return true
+      }else{
+        return false
       }
     },
     async updateStudentDebt () {
@@ -230,6 +292,7 @@ export default {
   async created () {
     User = await firebase.getCurrentUser()
     await this.importName()
+    await this.queryDate()
   }
 }
 </script>
