@@ -27,7 +27,7 @@
           v-model="beginingTime"
           mask="time"
           :rules="['time']"
-          style="max-width: 105px"
+         style="max-width: 105px"
         >
           <template v-slot:append>
             <q-icon name="access_time" class="cursor-pointer" >

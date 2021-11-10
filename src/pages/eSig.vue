@@ -56,6 +56,8 @@ export default {
   data () {
     return {
       imgs: [],
+      docID: this.$route.params.id,
+      refID: null
     }
   },
     async created () {
@@ -68,25 +70,32 @@ export default {
     async save () {
       const { isEmpty, data } = this.$refs.signaturePad.saveSignature()
       this.$refs.signaturePad.clearSignature()
-      this.imgs.push(data)
-      await db.collection('Signature').doc(this.$route.params.id).update({
+      console.log(data)
+      await db.collection('Signature').doc(this.refID).update({
         ImgsBase64: data
       }).catch((err) => { console.log(err) })
+
     },
     backToHome () {
       this.$router.push('/home')
     },
     async querySignature () {
-      await db.collection('Signature').doc(this.$route.params.id).get()
-        .then((doc) => {
-          if (doc.data().ImgsBase64 === null){
-            this.imgs = []
-            this.refID = doc.data().workListID
-           }else {
-             this.imgs.push(doc.data().ImgsBase64) 
-             this.refID = doc.data().workListID
-           }
-        }).catch((err) => { console.log(err) })
+      await db.collection('Signature')
+        .where('workListID' , '==' , this.docID)
+        .get()
+        .then((snapshot) =>{
+          snapshot.forEach((doc) =>{
+            console.log("asdasd")
+            if(doc.data().ImgsBase64 === null){
+              this.imgs = []
+              this.refID = doc.id
+            }else {
+              console.log(doc.data().ImgsBase64)
+              this.imgs.push(doc.data().ImgsBase64)
+              this.refID = doc.id
+            }
+          })
+        })
     },
   }
 }
