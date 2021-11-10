@@ -2,6 +2,13 @@
 <q-card class="full-width">
   <div>
       <br>
+      <q-btn
+      class="glossy"
+      round
+      color="primary"
+      icon="arrow_back"
+      @click="backToHome"
+    />
     <div class="row justify-center">
     <span>Signature</span>
       <div class="col-12 q-mt-md row justify-center">
@@ -40,6 +47,8 @@
 </template>
 
 <script>
+import firebase from 'firebase'
+const db = firebase.firestore()
 export default {
   name: 'MySignaturePad',
   computed: {
@@ -49,17 +58,36 @@ export default {
       imgs: [],
     }
   },
+    async created () {
+    await this.querySignature()
+  },
   methods: {
     undo () {
       this.$refs.signaturePad.undoSignature()
     },
-    save () {
+    async save () {
       const { isEmpty, data } = this.$refs.signaturePad.saveSignature()
       this.$refs.signaturePad.clearSignature()
-      console.log(isEmpty)
-      console.log(data)
       this.imgs.push(data)
-    }
+      await db.collection('Signature').doc(this.$route.params.id).update({
+        ImgsBase64: data
+      }).catch((err) => { console.log(err) })
+    },
+    backToHome () {
+      this.$router.push('/home')
+    },
+    async querySignature () {
+      await db.collection('Signature').doc(this.$route.params.id).get()
+        .then((doc) => {
+          if (doc.data().ImgsBase64 === null){
+            this.imgs = []
+            this.refID = doc.data().workListID
+           }else {
+             this.imgs.push(doc.data().ImgsBase64) 
+             this.refID = doc.data().workListID
+           }
+        }).catch((err) => { console.log(err) })
+    },
   }
 }
 </script>

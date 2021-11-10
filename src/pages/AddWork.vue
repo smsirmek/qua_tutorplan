@@ -156,9 +156,13 @@ export default {
           EndingTime: this.endingTime,
           userId: User.uid
         }).catch((err) => { console.log(err) })
+        .then( async(docRef) => {
+        await this.createSignature(docRef.id)
         await this.updateStudentDebt()
         await this.createStudentBill()
         this.$router.push('/home')
+        })
+
       }
     },
     async updateStudentDebt () {
@@ -185,7 +189,14 @@ export default {
         studentName: this.name.label,
         userId: User.uid
       })
+    },
+    async createSignature (id) {
+      await db.collection('Signature').add({
+        ImgsBase64: null,
+        workListID: id,
+      })
     }
+
   },
   computed: {
     totalServicecharge () {
