@@ -17,9 +17,11 @@
       <div>
         <p class="q-px-sm q-pt-md">Date</p>
       </div>
-      <q-input v-model="date" filled type="date" hint="Native date" />
+      <div class="q-px-md q-pt-sm">
+      <q-date v-model="date" filled type="date" hint="Native date" multiple />
+      </div>
     </div>
-    <div class="row">
+    <div class="row q-pt-md">
       <div class="q-px-sm q-pt-md">Time</div>
       <div>
         <q-input
@@ -66,8 +68,6 @@
         </q-input>
       </div>
     </div>
-    <p class="q-px-sm q-pt-sm">Alert</p>
-          <q-select class="q-px-md q-mt-md" outlined v-model="alert" :options="options" />
     <p class="q-px-sm q-pt-md">Details</p>
           <q-input v-model="details" outlined type="textarea" class="q-px-md q-pd-md" />
     <div class="row q-pt-md">
@@ -93,7 +93,7 @@
           type="submit"
           color="primary"
           label="Add"
-          @click="addNewtodolist"
+          @click="setUpLogic"
         />
     </div>
     </q-banner>
@@ -103,13 +103,14 @@
 <script>
 import moment from 'moment'
 import firebase from 'firebase'
+import { useQuasar } from 'quasar'
 const db = firebase.firestore()
 let User
 export default {
   data () {
     return {
       title: null,
-      date: null,
+      date: [],
       beginingTime: null,
       endingTime: null,
       serviceCharge: null,
@@ -120,7 +121,9 @@ export default {
       alert: null,
       options: [
         'On', 'Off'
-      ]
+      ],
+      quasarPlugin: useQuasar(),
+      Check: []
     }
   },
   methods: {
@@ -128,7 +131,6 @@ export default {
       this.$router.push('/home')
     },
     async importName () {
-      console.log(User.uid)
       await db.collection('StudentList').where('userId', '==', User.uid).get()
         .then((doc) => {
           doc.forEach((doc) => {
@@ -138,17 +140,15 @@ export default {
             obj.Debt = doc.data().debt
             this.studentNames.push(obj)
           })
-          console.log(this.studentNames)
         })
     },
     async addNewtodolist () {
-      if (this.title && this.name && this.date && this.timeCalculator && this.alert && this.details && this.serviceCharge && this.totalServicecharge && this.beginingTime && this.endingTime) {
+        for(let i=0;i<this.date.length;i++) {
         await db.collection('WorkList').add({
           Title: this.title,
           Name: this.name,
-          Date: this.date,
+          Date: this.date[i],
           Timeinminutes: this.timeCalculator,
-          Alert: this.alert,
           Details: this.details,
           Amountperhour: this.serviceCharge,
           Totalservicecharge: this.totalServicecharge,
@@ -163,6 +163,73 @@ export default {
         this.$router.push('/home')
         })
 
+        }
+        
+    },
+    async queryDate () {
+      await db.collection('WorkList').where('userId', '==', User.uid).get()
+      .then((doc) => {
+        doc.forEach((doc) => {
+          const obj = {}
+        obj.beginTime  = moment(doc.data().Date).format('YYYY-MM-DD').concat(' '+ doc.data().BeginingTime)
+        obj.endTime = moment(doc.data().Date).format('YYYY-MM-DD').concat(' '+ doc.data().EndingTime)
+          this.Check.push(obj)
+        })
+      })
+    },
+    // moment('2010-10-20').isBetween('2010-10-19', '2010-10-25');   
+    async checkDateTime () {
+      {
+      for(let i=0; i<this.Check.length; i++){
+          for(let j=0; j<this.date.length; j++){
+            console.log('checkDateTime run '+j)
+            const timeAddBegin = moment(this.date[j]).format('YYYY-MM-DD').concat(' '+this.beginingTime)
+            const timeAddEnd = moment(this.date[j]).format('YYYY-MM-DD').concat(' '+this.endingTime)
+            const checkTimeBetween = moment(timeAddBegin).isBetween(this.Check[i].beginTime, this.Check[i].endTime)
+            const checkTimeBetweenEnd = moment(timeAddEnd).isBetween(this.Check[i].beginTime, this.Check[i].endTime)
+            const checkBeginTime = moment(timeAddBegin).isSame(moment(this.Check[i].beginTime))
+            const checkEndTime = moment(timeAddEnd).isSame(moment(this.Check[i].endTime))
+            const checkQueryTimeBetween = moment(this.Check[i].beginTime).isBetween(timeAddBegin, timeAddEnd)
+            const log = console.log
+            // log('pickedday '+this.date[j])
+            // log(this.Check[i].beginTime)
+            // log(this.Check[i].endTime)
+            // log(timeAddBegin)
+            // log(timeAddEnd)
+            // log(checkTimeBetween)
+            // log(checkTimeBetweenEnd)
+            // log(checkBeginTime)
+            // log(checkEndTime)
+            // log(checkQueryTimeBetween)
+            if(checkTimeBetween || checkBeginTime || checkEndTime || checkTimeBetweenEnd || checkQueryTimeBetween){
+              this.quasarPlugin.notify({message: `Schedule conflict`, color: 'red'})
+              return true
+            }else{
+              console.log('มันไม่ชนนะ')
+              }
+          }          
+      }
+      return false
+      }
+    },
+    async setUpLogic () {
+      const checkDateTime = await this.checkDateTime()
+      const checkValidate = await this.inputValidate()
+      const log = console.log
+      if(checkValidate && !checkDateTime || checkDateTime === undefined){
+      // log(checkDateTime)
+      // log(checkValidate)
+         await  this.addNewtodolist()
+         await this.updateStudentDebt()
+        await this.createStudentBill()
+       this.$router.push('/home')
+      }
+    },
+    async inputValidate (){
+      if (this.title && this.name && this.date && this.timeCalculator  && this.details && this.serviceCharge && this.totalServicecharge && this.beginingTime && this.endingTime){
+        return true
+      }else{
+        return false
       }
     },
     async updateStudentDebt () {
@@ -203,6 +270,7 @@ export default {
       let sum = 0
       let excessTime = 0
       let finalTime = 0
+      if(moment(this.beginingTime, 'h:mm').isBefore(moment(this.endingTime,'h:mm'))){
       const totalTime = moment(this.endingTime, 'h:mm').diff(moment(this.beginingTime, 'h:mm'), 'minutes')
       if (totalTime % 60 !== 0) {
         excessTime = totalTime % 60
@@ -212,10 +280,12 @@ export default {
         sum = (totalTime / 60) * this.serviceCharge
       }
       return sum
+    }
     },
     timeCalculator () {
       let excessTime = 0
       let finalTime = 0
+      if(moment(this.beginingTime, 'h:mm').isBefore(moment(this.endingTime, 'h:mm'))){
       const totalTime = moment(this.endingTime, 'h:mm').diff(moment(this.beginingTime, 'h:mm'), 'minutes')
       if (totalTime % 60 !== 0) {
         excessTime = totalTime % 60
@@ -224,12 +294,18 @@ export default {
         finalTime = totalTime
       }
       return finalTime
+      }else{
+        this.quasarPlugin.notify(
+          {message: 'Please select new time', color: 'red'}
+          )
+       }
     }
 
   },
   async created () {
     User = await firebase.getCurrentUser()
     await this.importName()
+    await this.queryDate()
   }
 }
 </script>
