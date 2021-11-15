@@ -158,8 +158,6 @@ export default {
         }).catch((err) => { console.log(err) })
         .then( async(docRef) => {
         await this.createSignature(docRef.id)
-        await this.updateStudentDebt()
-        await this.createStudentBill()
         this.$router.push('/home')
         })
 
@@ -221,7 +219,7 @@ export default {
       // log(checkValidate)
          await  this.addNewtodolist()
          await this.updateStudentDebt()
-        await this.createStudentBill()
+         await this.createStudentBill()
        this.$router.push('/home')
       }
     },
@@ -238,6 +236,7 @@ export default {
       }).catch((err) => { console.log(err) }).then(() => { console.log('update success') })
     },
     async createStudentBill () {
+      for(let i=0;i<this.date.length;i++) {
       const m = moment(this.endingTime, 'h:mm').diff(moment(this.beginingTime, 'h:mm'), 'minutes')
       const hours = Math.floor(m / 60)
       const minutes = m % 60
@@ -249,13 +248,14 @@ export default {
         prepare = hours
       }
       await db.collection('Bill').add({
-        Date: moment(this.date).format('DD/MM/YYYY'),
+        Date: moment(this.date[i]).format('DD/MM/YYYY'),
         Hour: prepare,
         Total: this.totalServicecharge,
         paid: false,
         studentName: this.name.label,
         userId: User.uid
       })
+      }
     },
     async createSignature (id) {
       await db.collection('Signature').add({
