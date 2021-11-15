@@ -26,7 +26,7 @@
       <q-dialog v-model="confirm" persistent>
         <q-card>
           <q-card-section class="row items-center">
-            <span class="q-ml-sm">ยืนยันการชำระเงิน เมื่อยืนยันแล้วขะไม่สามารถเเก้ไขได้</span>
+            <span class="q-ml-sm">ยืนยันการชำระเงิน เมื่อยืนยันแล้วจะไม่สามารถเเก้ไขได้</span>
           </q-card-section>
 
           <q-card-actions align="right">

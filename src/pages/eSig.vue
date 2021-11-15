@@ -35,7 +35,8 @@
         />
       </div>
     </div>
-
+ <q-separator/>
+ 
     <div class="q-mt-md">
       <div class="row q-gutter-md justify-center" v-for="(img, key) in imgs" :key="key">
         <img style="border: thin silver solid;" :src="img">
@@ -114,5 +115,9 @@ export default {
   width: 300px;
   height: auto;
   padding: 15px;
+}
+img {
+  max-width: 100%;
+  height: auto;
 }
 </style>
