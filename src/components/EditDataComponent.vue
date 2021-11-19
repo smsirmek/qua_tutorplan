@@ -20,7 +20,7 @@
         class="q-mb-md"
         type="tel"
         label="Student contact"
-        :rules="[val => !!val || 'Field is required']"
+        :rules="[val => !!val || 'Field is required',tel]"
         mask="###-#######"
         />
         <q-input
@@ -37,7 +37,7 @@
         class="q-mb-md"
         type="tel"
         label="Parent contact"
-        :rules="[val => !!val || 'Field is required']"
+        :rules="[val => !!val || 'Field is required',tel]"
         mask="###-#######"
         />
         <q-input
@@ -82,6 +82,13 @@ components: { ListpageComponent },
       parentContact: null,
       address: null,
       quasarPlugin: useQuasar(),
+      tel:  (value) => {
+          let result = false
+          if(value[0] === '0' && (value[1] === '6' || value[1] === '8' || value[1] === '9') && value.length == 11){
+            result = true
+          }
+          return result || 'Wrong templae'
+        }
     }
   },
   methods: {
