@@ -28,7 +28,7 @@
         <q-card>
           <q-card-section class="row items-center">
             <span class="q-ml-sm"
-              >ยืนยันการชำระเงิน เมื่อยืนยันแล้วจะไม่สามารถเเก้ไขได้</span
+              >Confirm payment</span
             >
           </q-card-section>
 

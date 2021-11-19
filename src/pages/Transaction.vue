@@ -3,7 +3,7 @@
     <q-saparetor />
     <br /><br />
     <q-table
-      title="Transection"
+      title="Transaction"
       :rows="studentList"
       :columns="columns"
       row-key="name"
