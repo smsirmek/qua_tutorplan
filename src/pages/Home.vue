@@ -17,7 +17,7 @@
           <q-tab-panel :name="showEvent" class="bg-white-1 rounded-borders">
             <q-list bordered class="rounded-borders">
                 <q-item clickable v-ripple v-for="(item, index) in showEvetTitle" :key="index">
-                  <q-item-section>
+                  <q-item-section @click="goSignature(item.docID)">
                     <q-slide-item @right="deleteStudentData(item.docID)">
                       <template v-slot:right>
                         <q-icon name="delete" />
@@ -111,7 +111,7 @@ export default {
     },
     async deleteStudentData (docID) {
       await db
-        .collection('Todolist')
+        .collection('WorkList')
         .doc(docID)
         .delete()
         .then(
@@ -129,6 +129,11 @@ export default {
     async editStudentData (docID) {
       this.$router.push('/edit/work/' + docID)
     },
+
+    async goSignature (docID) {
+      this.$router.push('/esig/'+ docID)
+    },
+
     showLoading (isLoading) {
       if (isLoading) {
         this.quasarPlugin.loading.show()
