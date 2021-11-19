@@ -136,6 +136,7 @@
           @click="setUpLogic"
         />
       </div>
+    </div>
     </q-banner>
   </div>
 </template>
