@@ -10,15 +10,13 @@
       />
       <p class="q-px-md q-pt-md flex flex-center">Add Work</p>
       <p class="q-px-sm q-pt-sm">Title</p>
-      <q-input v-model="title" outlined type="title" class="q-px-md q-pd-md" :rules="[val => !!val || 'Field is required']"
-      />
+      <q-input v-model="title" outlined type="title" class="q-px-md q-pd-md" />
       <p class="q-px-sm q-pt-md">Name</p>
       <q-select
         class="q-px-md q-mt-md"
         outlined
         v-model="name"
         :options="studentNames"
-        :rules="[val => !!val || 'Field is required']"
       />
       <div class="row q-pt-md q-pb-md">
         <div>
@@ -97,7 +95,6 @@
             type="title"
             class="q-px-sm q-pd-md"
             style="max-width: 140px"
-            :rules="[val => !!val || 'Field is required']"
           />
         </div>
         <div class="q-pt-md">Baht/hour</div>
@@ -111,7 +108,6 @@
             type="title"
             class="q-px-sm q-pd-md"
             style="max-width: 180px"
-            disable
           />
         </div>
         <div class="q-pt-md">Baht</div>
@@ -151,6 +147,8 @@ export default {
       alert: null,
       options: ["On", "Off"],
       quasarPlugin: useQuasar(),
+      WorkListDocRef: [],
+      BillListDocRef: [],
       Check: [],
     };
   },
@@ -173,6 +171,22 @@ export default {
           });
         });
     },
+    async setUpLogic() {
+      const checkDateTime = await this.checkDateTime();
+      const checkValidate = await this.inputValidate();
+      const log = console.log;
+      if ((checkValidate && !checkDateTime) || checkDateTime === undefined) {
+        await this.addNewtodolist();
+        console.log("done add work");
+        await this.updateStudentDebt();
+        console.log("done update");
+        await this.createStudentBill();
+        console.log("done create bill");
+        await this.createSignature();
+        console.log("done add esign");
+        this.$router.push("/home");
+      }
+    },
     async addNewtodolist() {
       for (let i = 0; i < this.date.length; i++) {
         await db
@@ -190,7 +204,10 @@ export default {
             userId: User.uid,
           })
           .catch((err) => {
-            this.quasarPlugin.notify({message: `Error ${err}`, color: "red"})
+            console.log(err);
+          })
+          .then(async (docRef) => {
+            this.WorkListDocRef.push(docRef.id);
           });
       }
     },
@@ -217,6 +234,7 @@ export default {
       {
         for (let i = 0; i < this.Check.length; i++) {
           for (let j = 0; j < this.date.length; j++) {
+            console.log("checkDateTime run " + j);
             const timeAddBegin = moment(this.date[j])
               .format("YYYY-MM-DD")
               .concat(" " + this.beginingTime);
@@ -240,17 +258,7 @@ export default {
             const checkQueryTimeBetween = moment(
               this.Check[i].beginTime
             ).isBetween(timeAddBegin, timeAddEnd);
-            //const log = console.log;
-            // log('pickedday '+this.date[j])
-            // log(this.Check[i].beginTime)
-            // log(this.Check[i].endTime)
-            // log(timeAddBegin)
-            // log(timeAddEnd)
-            // log(checkTimeBetween)
-            // log(checkTimeBetweenEnd)
-            // log(checkBeginTime)
-            // log(checkEndTime)
-            // log(checkQueryTimeBetween)
+            const log = console.log;
             if (
               checkTimeBetween ||
               checkBeginTime ||
@@ -264,22 +272,11 @@ export default {
               });
               return true;
             } else {
-              //console.log("มันไม่ชนนะ");
+              console.log("มันไม่ชนนะ");
             }
           }
         }
         return false;
-      }
-    },
-    async setUpLogic() {
-      const checkDateTime = await this.checkDateTime();
-      const checkValidate = await this.inputValidate();
-    //  const log = console.log;
-      if ((checkValidate && !checkDateTime) || checkDateTime === undefined) {
-        await this.addNewtodolist();
-        await this.updateStudentDebt();
-        await this.createStudentBill();
-        this.$router.push("/home");
       }
     },
     async inputValidate() {
@@ -296,7 +293,6 @@ export default {
       ) {
         return true;
       } else {
-        this.quasarPlugin.notify({message: 'Some field is required', color: "red"})
         return false;
       }
     },
@@ -308,34 +304,51 @@ export default {
           debt: this.name.Debt + this.totalServicecharge,
         })
         .catch((err) => {
-          this.quasarPlugin.notify({message: `Error ${err}`, color: "red"})
+          console.log(err);
         })
         .then(() => {
-          this.quasarPlugin.notify({message: 'Add success', color: "red"})
+          console.log("update success");
         });
     },
     async createStudentBill() {
-      const m = moment(this.endingTime, "h:mm").diff(
-        moment(this.beginingTime, "h:mm"),
-        "minutes"
-      );
-      const hours = Math.floor(m / 60);
-      const minutes = m % 60;
-      let prepare;
-      if (minutes !== 0) {
-        let x = +minutes * 0.01;
-        prepare = hours + x;
-      } else {
-        prepare = hours;
+      for (let i = 0; i < this.date.length; i++) {
+        const m = moment(this.endingTime, "h:mm").diff(
+          moment(this.beginingTime, "h:mm"),
+          "minutes"
+        );
+        const hours = Math.floor(m / 60);
+        const minutes = m % 60;
+        let prepare;
+        if (minutes !== 0) {
+          let x = +minutes * 0.01;
+          prepare = hours + x;
+        } else {
+          prepare = hours;
+        }
+        await db
+          .collection("Bill")
+          .add({
+            Date: moment(this.date[i]).format("DD/MM/YYYY"),
+            Hour: prepare,
+            Total: this.totalServicecharge,
+            paid: false,
+            isSign: false,
+            studentName: this.name.label,
+            userId: User.uid,
+          })
+          .then(async (docRef) => {
+            this.BillListDocRef.push(docRef.id);
+          });
       }
-      await db.collection("Bill").add({
-        Date: moment(this.date).format("DD/MM/YYYY"),
-        Hour: prepare,
-        Total: this.totalServicecharge,
-        paid: false,
-        studentName: this.name.label,
-        userId: User.uid,
-      });
+    },
+    async createSignature() {
+      for (let x = 0; x < this.BillListDocRef.length; x++) {
+        await db.collection("Signature").add({
+          ImgsBase64: null,
+          BillListID: this.BillListDocRef[x],
+          WorkListDocRef: this.WorkListDocRef[x],
+        });
+      }
     },
   },
   computed: {

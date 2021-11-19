@@ -1,31 +1,48 @@
 <template>
   <div class="q-pa-md doc-container">
     <q-banner class="bg-grey-3 rounded-borders">
-      <q-btn
-        class="glossy"
-        round
-        color="primary"
-        icon="arrow_back"
-        @click="backToHome"
-      />
-      <p class="q-px-md q-pt-md flex flex-center">Add Work</p>
-      <p class="q-px-sm q-pt-sm">Title</p>
-      <q-input v-model="title" outlined type="title" class="q-px-md q-pd-md" :rules="[val => !!val || 'Field is required']"/>
-      <p class="q-px-sm q-pt-md">Name</p>
-      <q-select
-        class="q-px-md q-mt-md"
-        outlined
-        v-model="name"
-        :options="studentNames"
-        :rules="[val => !!val || 'Field is required']"
-      />
-      <div class="row q-pt-md q-pb-md">
-        <div>
-          <p class="q-px-sm q-pt-md">Date</p>
-        </div>
-        <div class="q-px-md q-pt-sm">
-          <q-date v-model="date" filled type="date" hint="Native date" />
-        </div>
+    <q-btn
+      class="glossy"
+      round
+      color="primary"
+      icon="arrow_back"
+      @click="backToHome"
+    />
+    <p class="q-px-md q-pt-md flex flex-center " >Add Work</p>
+    <p class="q-px-sm q-pt-sm">Title</p>
+    <q-input v-model="title" outlined type="title" class="q-px-md q-pd-md" />
+    <p class="q-px-sm q-pt-md">Name</p>
+    <q-select class="q-px-md q-mt-md" outlined v-model="name" :options="studentNames" />
+    <div class="row q-pt-md q-pb-md">
+      <div>
+        <p class="q-px-sm q-pt-md">Date</p>
+      </div>
+      <div class="q-px-md q-pt-sm">
+      <q-date v-model="date" filled type="date" hint="Native date"/>
+      </div>
+    </div>
+    <div class="row q-pt-md">
+      <div class="q-px-sm q-pt-md">Time</div>
+      <div>
+        <q-input
+          filled
+          v-model="beginingTime"
+          mask="time"
+          :rules="['time']"
+         style="max-width: 105px"
+        >
+          <template v-slot:append>
+            <q-icon name="access_time" class="cursor-pointer" >
+              <q-popup-proxy transition-show="scale" transition-hide="scale">
+                <q-time v-model="beginingTime" format24h>
+                  <div class="row items-center justify-end">
+                    <q-btn v-close-popup label="Close" color="primary" flat />
+                  </div>
+                </q-time>
+              </q-popup-proxy>
+            </q-icon>
+          </template>
+        </q-input>
       </div>
       <div class="row q-pt-md">
         <div class="q-px-sm q-pt-md">Time</div>
