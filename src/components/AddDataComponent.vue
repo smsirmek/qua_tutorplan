@@ -10,31 +10,43 @@
         outlined
         class="q-mb-md"
         type="title"
-        label="Student name"/>
+        label="Student name"
+        :rules="[val => !!val || 'Field is required']"
+        />
       <q-input
         v-model="formData.studentContact"
         outlined
         class="q-mb-md"
-        type="title"
-        label="Student contact"/>
+        type="tel"
+        label="Student contact"
+        :rules="[val => !!val || 'Field is required',tel]"
+        mask="###-#######"
+        />
         <q-input
         v-model="formData.parentName"
         outlined
         class="q-mb-md"
         type="title"
-        label="Parent name"/>
+        label="Parent name"
+        :rules="[val => !!val || 'Field is required']"
+        />
         <q-input
         v-model="formData.parentContact"
         outlined
         class="q-mb-md"
-        type="title"
-        label="Parent contact"/>
+        type="tel"
+        label="Parent contact"
+        :rules="[val => !!val || 'Field is required',tel]"
+        mask="###-#######"
+        />
         <q-input
         v-model="formData.address"
         outlined
         class="q-mb-md"
         type="title"
-        label="Address"/>
+        label="Address"
+        :rules="[val => !!val || 'Field is required']"
+        />
       <div class="flex flex-center">
         <q-btn
         class="flex flex-center q-px-lg q-py-sm q-mb-md"
@@ -70,12 +82,18 @@ components: { ListpageComponent },
         parentContact: null,
         address: null
       },
-      tab: ''
+      tab: '',
+    tel:  (value) => {
+          let result = false
+          if(value[0] === '0' && (value[1] === '6' || value[1] === '8' || value[1] === '9') && value.length == 11){
+            result = true
+          }
+          return result || 'Wrong templae'
+        }
     }
   },
   methods: {
     submitForm () {
-      console.log(this.formData)
     },
   async addNewStudent () {
 /* eslint-disable */ 
