@@ -2,7 +2,7 @@
   "name": "qua_tutorplan",
   "version": "0.0.1",
   "description": "A Quasar Framework app",
-  "productName": "Quasar App",
+  "productName": "Tutorplan",
   "author": "smsirmek <suttipong.mek@gmail.com>",
   "private": true,
   "scripts": {

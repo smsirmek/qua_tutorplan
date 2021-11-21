@@ -85,14 +85,12 @@ export default {
       const provider = new firebase.auth.GoogleAuthProvider()
       firebase.auth().signInWithPopup(provider)
         .then(result => {
-          console.log('result', result)
           this.$q.notify({ message: 'Sign In Success.' })
           this.$router.push('/home')
         })
         .catch(error => console.log('error', error))
     },
     signInExistingUser (email, password) {
-      console.log(email, password)
       firebase.auth().signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
           this.$q.notify({ message: 'Sign In Success.' })
@@ -103,7 +101,6 @@ export default {
         })
     },
     createUser (email, password) {
-      console.log(email, password)
       firebase.auth().createUserWithEmailAndPassword(email, password)
         .then(auth => {
           this.$q.notify({ message: 'Sign In Success.' })

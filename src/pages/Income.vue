@@ -152,7 +152,7 @@ export default {
 
 <style scoped>
 .Inn-block {
-  background-color: lightgrey;
+  background-color: rgb(238, 238, 238);
   border: 0.5px solid black;
   padding: 15px;
   margin: 20px;
