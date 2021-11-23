@@ -40,7 +40,7 @@
             v-model="beginingTime"
             mask="time"
             :rules="['time']"
-            style="max-width: 105px"
+            style="max-width: 90px"
           >
             <template v-slot:append>
               <q-icon name="access_time" class="cursor-pointer">
@@ -55,14 +55,14 @@
             </template>
           </q-input>
         </div>
-        <div class="q-px-md q-pt-md">-</div>
+        <div class="q-px-sm q-pt-md">-</div>
         <div>
           <q-input
             filled
             v-model="endingTime"
             mask="time"
             :rules="['time']"
-            style="max-width: 105px"
+            style="max-width: 90px"
             format24h
           >
             <template v-slot:append>
